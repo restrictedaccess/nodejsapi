@@ -1,0 +1,36 @@
+{
+   "_id": "_design/staff",
+   "language": "javascript",
+   "filters": {
+       "status": "function(doc, req) { if(doc.type == 'users') {return true;} else {return false;}}"
+   },
+   "views": {
+       "lunchbreak": {
+           "map": "function(doc) {\n  if (doc.type == 'users' && doc.status == 'lunch break') {\n  emit(doc.lunch_started, doc);\n  }\n}"
+       },
+       "poll_connection": {
+           "map": "function(doc) {\n  if (doc.type == 'users' && doc.poll_connection == true \n  && doc.user_type == 'staff' && doc.connected == false\n  && doc.status == 'working' && doc.ongoing_speed_test == null) {\n  emit(doc.last_seen, doc.notify_disconnected);\n}\n}"
+       },
+       "userid": {
+           "map": "function(doc) {\n  if (doc.type == 'users' && doc.user_type == 'staff') {\n  emit(doc.reference_id, doc);\n  }\n}"
+       },
+       "quickbreak": {
+           "map": "function(doc) {\n  if (doc.type == 'users' && doc.quick_break != null) {\n  emit(doc.quick_break, doc);\n  }\n}"
+       },
+       "active": {
+           "map": "function(doc) {\n  if (doc.type == 'users' && doc.user_type == 'staff' && doc.active == 'Y') {\n  emit(doc.reference_id, doc);\n  }\n}"
+       },
+       "sked": {
+           "map": "function(doc) {\n  if (doc.sked && doc.connected == true) {\n  for (var idx in doc.sked) {\n  emit(doc.sked[idx], idx);\n  }\n  }\n}"
+       },
+       "working": {
+           "map": "function(doc) {\n  if (doc.type == 'users' && doc.user_type == 'staff' && doc.status == 'working') {\n  emit(doc.reference_id, doc);\n  }\n}"
+       },
+       "working_disconnected": {
+           "map": "function(doc) {\n  if (doc.type == 'users' && doc.user_type == 'staff' && doc.status == 'working' && doc.connected == false) {\n  emit(doc.last_seen, {'reference_id':doc.reference_id, 'fname':doc.fname, 'lname':doc.lname});\n  }\n}"
+       },
+       "running_late_daily": {
+           "map": "function(doc) {\n  if (doc.type == 'subcontractor' && doc.flexi == 'no' && doc.active == 'Y') {\n    for (var day in doc.daily_schedule) {\n      var start = doc.daily_schedule[day].start;\n      var end = doc.daily_schedule[day].end;\n      if ((start[0] == 0 && start[1] == 0 && start[2] == 0 && end[0] == 0 && end[1] == 0 && end[2] == 0) != true) {\n        emit([day, start], {'staff':doc.staff, 'userid': doc.userid, 'client':doc.client, 'job_designation':doc.job_designation, 'leads_id':doc.leads_id});\n      }\n    }\n  }\n}"
+       }
+   }
+}

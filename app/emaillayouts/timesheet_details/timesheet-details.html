@@ -1,0 +1,21 @@
+
+{% block content %}
+
+<div style="background-color: #FFF; border: 1px solid #E1E1E8; border-radius: 4px 4px 4px 4px; box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset; margin-bottom: 20px;     min-height: 20px; padding: 19px; font-family:Verdana, Geneva, sans-serif; font-size:14px;">
+
+    <div style="margin-bottom:20px; border-bottom: 1px solid #ccc; margin-bottom: 20px;     padding-bottom: 20px;"><img src="http://remotestaff.com.au/remotestaff_2015/img/logo.png"></div>
+    <p>Timesheet Month Year: {{data.montYear}}</p>
+    <p>Timesheet Day: {{data.ts_details.day}}</p>
+    <p>Date Noted: {{data.sendNotes.timestamp}}</p>
+    <p>Client: {{data.ts.lead.fname}} {{data.ts.lead.lname}}</p>
+    <p>SC Assigned: {{data.sc.fname}} {{data.sc.lname}}</p>
+    <p>Noted by: {{data.ts.personal.fname}} {{data.ts.personal.lname}}</p>
+    <p>Noted: {{data.sendNotes.notes | safe}}</p>
+    <p>Category: {{data.sendNotes.category}}</p>
+    <br />
+    <p>For overtime approval, please contact your client. If it has been approved, please reply to this email or click this link: <a href="http://sc.remotestaff.com.au/portal/django/staff_productivity_reports/timesheets">Remotestaff Timesheet</a></p>
+    <br/>
+    <p>Attendance Team</p>
+</div>
+
+{% endblock %}

@@ -1,0 +1,106 @@
+FEATURE: System syncs negative invoices to xero.com as Credit Note
+SCENARIO1: An Invoice has a negative amount generated when an Admin creates an invoice with Credit Note Memo [Happy Path]
+    Given:
+        Client:
+            Chris Horsley-Wyatt
+            with ID of 14076
+            and email address of chris@blonde-robot.com.au
+            currency is AUD
+            apply_gst is Y
+        Admin:
+            Allanaire Tapion
+            with ID of 143
+        Contact:
+            ContactID is bf3108db-c4fd-4f82-ac0c-77c54592a697
+        Invoice Details:
+            order_id is 14076-00000008
+            pay_before_date June 09 2017
+            added_on is June 04 2017
+            sub_total is -500
+            apply_gst is Y
+            total_amount is -505
+            gst_amount is -5
+            status is new
+            items is a collection of
+            1. item1:
+                description is Credit Note Memo
+                item_id is 1
+                start_date is Jun 01 2017
+                end_date is Jun 30 2017 (last day of the month)
+                unit_price is 5
+                qty is -100
+                item_type is Others
+                amount is -500(unit_price * qty)
+    When:
+        The invoice is saved in our system
+    Then:
+        Xero client will save negative invoice as Credit Note
+        with CreditNoteNumber field to be: 14076-00000008
+        with Contact field to be:
+            ContactID is bf3108db-c4fd-4f82-ac0c-77c54592a697
+        with Type field to be ACCPAYCREDIT
+        with Amount field to be 500
+        with LineAmount field to be Exclusive
+        with Status field to be AUTHORISED
+        with Date field to be June 04 2017
+            LineItem1:
+                Description field to be Credit Note Memo
+                UnitAmount field to be 5
+                Quantity field to be 100
+                TaxType field to be OUTPUT
+                LineAmount field to be 500 (Quantity * UnitAmount)
+                AccountCode field to be RHH
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SCENARIO2: An admin creates an invoice with a negative amount with a type Credit Note Memo but xero.com responds with a 503 error code [Unhappy Path]
+    Given:
+        Client:
+            Chris Horsley-Wyatt
+            with ID of 14076
+            and email address of chris@blonde-robot.com.au
+            currency is AUD
+            apply_gst is Y
+        Admin:
+            Allanaire Tapion
+            with ID of 143
+        Contact:
+            ContactID is bf3108db-c4fd-4f82-ac0c-77c54592a697
+        Invoice Details:
+            order_id is 14076-00000008
+            pay_before_date June 09 2017
+            added_on is June 04 2017
+            sub_total is -500
+            apply_gst is N
+            total_amount is -500
+            status is new
+            items is a collection of
+            1. item1:
+                description is Credit Note Memo
+                item_id is 1
+                start_date is Jun 01 2017
+                end_date is Jun 30 2017 (last day of the month)
+                unit_price is 5
+                qty is -100
+                item_type is Others
+                amount is -500(unit_price * qty)
+
+    When:
+        Xero.com responds with a 503 error code
+    Then:
+        A history of the error code will be recorded

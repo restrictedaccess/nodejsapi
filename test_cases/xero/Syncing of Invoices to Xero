@@ -1,0 +1,274 @@
+FEATURE: System syncs invoices to xero.com as Invoice
+SCENARIO1: An Invoice is created in our system (system-generated) [Happy Path]
+    Given:
+        Client:
+            Chris Horsley-Wyatt
+            with ID of 14076
+            and email address of chris@blonde-robot.com.au
+            currency is AUD
+            apply_gst is Y
+        Subcon:
+            Veronica Ann Reyes
+            with subcon ID of 7405
+            job designation is Back-Office Adminstrator
+            current_rate is 36.00
+            client_price is 1154.44
+            hourly rate is 6.66
+        Timesheet:
+            Week 1 (Jun 01 to Jun 03) is 17
+            Week 2 (Jun 04 to Jun 10) is 40
+            Week 3 (Jun 11 to Jun 17) is 45
+            Week 4 (Jun 18 to Jun 24) is 35
+            Week 5 (Jun 25 to Jun 30) is 40
+            total adjusted hours is 177 (summation of adjusted hours from timesheet from Jun 1 to Jun 30)
+        Currency Adjustment Regular Invoicing:
+            currency is AUD
+            rate is 37.00
+            effective_date is Jun 2017
+        Invoice Details:
+        Not an overpayment (overpayment_from_doc_id does not exist)
+        order_id is 14076-00000006
+        pay_before_date June 09 2017
+        added_on is June 04 2017
+        status is new
+        sub_total is 1140.3
+        apply_gst is Y
+        gst_amount is 114.03 (10 % of sub_total)
+        total_amount is 1254.33
+        items is a collection of
+        1. item1:
+            staff_name is Veronica Ann Reyes
+            subcontractors_id is 7405
+            description is Veronica Ann Reyes [Back-Office Adminstrator]
+            job_designation is  Back-Office Adminstrator
+            item_id is 1
+            start_date is Jun 01 2017
+            end_date is Jun 30 2017 (last day of the month)
+            unit_price is 6.66
+            qty is 177 (hours worked of subcon)
+            item_type is Regular Rostered Hours
+            amount is 1178.82(unit_price * qty)
+
+        2. item2:
+            staff_name is Veronica Ann Reyes
+            subcontractors_id is 7405
+            description is Currency Adjustment (Contract Rate 1 AUD = 36.00 PESO vs. Current Rate 1 AUD = 37.00 PESO, Currency Difference of -1.00 PESO for your staff Veronica Ann Reyes [Back-Office Adminstrator])
+            job_designation is  Back-Office Adminstrator
+            item_id is 2
+            start_date is Jun 01 2017
+            end_date is Jun 30 2017 (last day of the month)
+            unit_price is −0.18 ((hourly_rate* (current_rate-forex_rate))/forex_rate)
+            qty is 177 (hours worked of subcon)
+            item_type is Currency Adjustment
+            amount is −31.86 (unit_price * qty)
+    When:
+        The invoice is saved in our system
+    Then:
+        Xero client will save invoice as Invoice
+        with Type field to be ACCREC
+        and InvoiceNumber field to be the 14076-00000006
+        and AmountDue field to be the 1254.33
+        and Status field to be AUTHORISED
+        and DueDate field to be June 09 2017
+        and LineAmountTypes field to be Exclusive
+        and CurrencyCode field to be AUD
+        and SubTotal field to be 1140.3
+        and TotalTax field to be 114.03 (10% of SubTotal field)
+        and Total field to be 1254.33 (SubTotal + TotalTax)
+        and LineItems field to be the items in the invoice with
+            LineItem1:
+                Description field to be the Veronica Ann Reyes [Back-Office Adminstrator] \n\nDate Coverage: [17 Jun 01 to 17 Jul 30]
+                UnitAmount field to be 6.66
+                Quantity field to be  177
+                TaxType field to be OUTPUT
+                LineAmount field to be 1168.2 (Quantity * UnitAmount)
+                TaxAmount field to be 116.82 (10% of LineAmount)
+                AccountCode field to be RHH
+            LineItem2:
+                Description field to be the Currency Adjustment (Contract Rate 1 AUD = 36.00 PESO vs. Current Rate 1 AUD = 37.00 PESO, Currency Difference of -1.00 PESO for your staff Veronica Ann Reyes [Back-Office Adminstrator]) \n\nDate Coverage: [17 Jun 01 to 17 Jul 30]
+                UnitAmount field to be −0.18
+                Quantity field to be 177
+                TaxType field to be OUTPUT
+                LineAmount field to be −31.86 (Quantity * UnitAmount)
+                TaxAmount field to be −3.19 (10% of LineAmount)
+                AccountCode field to be CUR LOS
+
+
+SCENARIO2: An admin created an invoice (manually-generated) [Happy Path]
+    Given:
+        Client:
+            Mathieu Cornillon
+            with ID of 12226
+            and email address of mathieu@sherpa.net.au
+            currency is AUD
+            apply_gst is Y
+        Admin:
+            Allanaire Tapion
+            with ID of 143
+        Subcon:
+            Andrea Jaeger Sierra
+            with subcon ID of 7147
+            job designation is Phone Support Professional (Office Based)
+            current_rate is 35.00
+            client_price is 1297.14
+            hourly rate is 7.48
+        Timesheet:
+            Week 1 (Jun 01 to Jun 03) is 16
+            Week 2 (Jun 04 to Jun 10) is 35
+            Week 3 (Jun 11 to Jun 17) is 40
+            Week 4 (Jun 18 to Jun 24) is 34
+            Week 5 (Jun 25 to Jun 30) is 35
+            total adjusted hours is 160 (summation of adjusted hours from timesheet from Jun 1 to Jun 30)
+        Currency Adjustment Regular Invoicing:
+            currency is AUD
+            rate is 37.00
+            effective_date is Jun 2017
+
+
+
+        Invoice Details:
+            Not an overpayment (overpayment_from_doc_id does not exist)
+            order_id is 12226-00000014
+            pay_before_date June 09 2017
+            added_on is June 04 2017
+            status is new
+            sub_total is 1132.8
+            apply_gst is Y
+            gst_amount is 113.28 (10 % of sub_total)
+            total_amount is 1246.08
+            items is a collection of
+            1. item1:
+                staff_name is Andrea Jaeger Sierra
+                subcontractors_id is 7147
+                description is Andrea Jaeger Sierra [Phone Support Professional (Office Based)]
+                job_designation is Phone Support Professional (Office Based)
+                item_id is 1
+                start_date is Jun 01 2017
+                end_date is Jun 30 2017 (last day of the month)
+                unit_price is 7.48
+                qty is 160 (hours worked of subcon)
+                item_type is Regular Rostered Hours
+                amount is 1196.8(unit_price * qty)
+
+            2. item2:
+                staff_name is Andrea Jaeger Sierra
+                subcontractors_id is 7147
+                description is Currency Adjustment (Contract Rate 1 AUD = 35.00 PESO vs. Current Rate 1 AUD = 37.00 PESO, Currency Difference of -2.00 PESO for your staff Andrea Jaeger Sierra [Phone Support Professional (Office Based)])
+                job_designation is Phone Support Professional (Office Based)
+                item_id is 2
+                start_date is Jun 01 2017
+                end_date is Jun 30 2017 (last day of the month)
+                unit_price is −0.40((hourly_rate* (current_rate-forex_rate))/forex_rate)
+                qty is 160 (hours worked of subcon)
+                item_type is Currency Adjustment
+                amount is −64 (unit_price * qty)
+
+    When:
+        The invoice is saved by the admin
+    Then:
+        Xero client will save invoice as Invoice
+        with Type field to be ACCREC
+        and InvoiceNumber field to be the 12226-00000014
+        and AmountDue field to be the 1246.08
+        and Status field to be AUTHORISED
+        and DueDate field to be June 09 2017
+        and LineAmountTypes field to be Exclusive
+        and CurrencyCode field to be AUD
+        and SubTotal field to be 1132.8
+        and TotalTax field to be 113.28 (10% of SubTotal field)
+        and Total field to be 1246.08 (SubTotal + TotalTax)
+        and LineItems field to be the items in the invoice with
+            LineItem1:
+                Description field to be the Andrea Jaeger Sierra [Phone Support Professional (Office Based)] \n\nDate Coverage: [17 Jun 01 to 17 Jul 30]
+                UnitAmount field to be 7.48
+                Quantity field to be 160
+                TaxType field to be OUTPUT
+                LineAmount field to be 1196.8 (Quantity * UnitAmount)
+                TaxAmount field to be 119.68 (10% of LineAmount)
+                AccountCode field to be RHH
+
+
+
+            LineItem2:
+                Description field to be the Currency Adjustment (Contract Rate 1 AUD = 35.00 PESO vs. Current Rate 1 AUD = 37.00 PESO, Currency Difference of -2.00 PESO for your staff Andrea Jaeger Sierra [Phone Support Professional (Office Based)]) \n\nDate Coverage: [17 Jun 01 to 17 Jul 30]
+                UnitAmount field to be −0.40
+                Quantity field to be 160
+                TaxType field to be OUTPUT
+                LineAmount field to be −64 (Quantity * UnitAmount)
+                TaxAmount field to be −6.4 (10% of LineAmount)
+                AccountCode field to be CUR LOS
+
+SCENARIO3: An invoice is created in our system and Xero.com responds with 503 error code (system generated or manual) [Unhappy Path]
+    Given:
+        Client:
+            Mathieu Cornillon
+            with ID of 12226
+            and email address of mathieu@sherpa.net.au
+            currency is AUD
+            apply_gst is Y
+        Admin:
+            Allanaire Tapion
+            with ID of 143
+        Subcon:
+            Andrea Jaeger Sierra
+            with subcon ID of 7147
+            job designation is Phone Support Professional (Office Based)
+            current_rate is 35.00
+            client_price is 1297.14
+            hourly rate is 7.48
+        Timesheet:
+            Week 1 (Jun 01 to Jun 03) is 16
+            Week 2 (Jun 04 to Jun 10) is 35
+            Week 3 (Jun 11 to Jun 17) is 40
+            Week 4 (Jun 18 to Jun 24) is 34
+            Week 5 (Jun 25 to Jun 30) is 35
+            total adjusted hours is 160 (summation of adjusted hours from timesheet from Jun 1 to Jun 30)
+        Currency Adjustment Regular Invoicing:
+            currency is AUD
+            rate is 37.00
+            effective_date is Jun 2017
+
+
+
+
+    Invoice Details:
+        Not an overpayment (overpayment_from_doc_id does not exist)
+        order_id is 12226-00000015
+        pay_before_date June 09 2017
+        added_on is June 04 2017
+        status is new
+        sub_total is 1132.8
+        apply_gst is Y
+        gst_amount is 113.28 (10 % of sub_total)
+        total_amount is 1246.08
+        items is a collection of
+        1. item1:
+            staff_name is Andrea Jaeger Sierra
+            subcontractors_id is 7147
+            description is Andrea Jaeger Sierra [Phone Support Professional (Office Based)]
+            job_designation is Phone Support Professional (Office Based)
+            item_id is 1
+            start_date is Jun 01 2017
+            end_date is Jun 30 2017 (last day of the month)
+            unit_price is 7.48
+            qty is 160 (hours worked of subcon)
+            item_type is Regular Rostered Hours
+            amount is 1196.8(unit_price * qty)
+
+        2. item2:
+            staff_name is Andrea Jaeger Sierra
+            subcontractors_id is 7147
+            description is Currency Adjustment (Contract Rate 1 AUD = 35.00 PESO vs. Current Rate 1 AUD = 37.00 PESO, Currency Difference of -2.00 PESO for your staff Andrea Jaeger Sierra [Phone Support Professional (Office Based)])
+            job_designation is Phone Support Professional (Office Based)
+            item_id is 2
+            start_date is Jun 01 2017
+            end_date is Jun 30 2017 (last day of the month)
+            unit_price is −0.40((hourly_rate* (current_rate-forex_rate))/forex_rate)
+            qty is 160 (hours worked of subcon)
+            item_type is Currency Adjustment
+            amount is −64 (unit_price * qty)
+
+    When:
+        The xero client responds with a 503 error code
+    Then:
+        A history of the error code will be recorded

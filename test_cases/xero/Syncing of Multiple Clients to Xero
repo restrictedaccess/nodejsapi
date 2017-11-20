@@ -1,0 +1,127 @@
+FEATURE:
+    System batch syncs clients to xero.com as contact every 30 seconds
+
+
+SCENARIO 1:
+    4 clients are updated to the system [Happy Path]
+
+    GIVEN:
+        Lead 1:
+            David Imrie
+            with ID of 14645
+            and email of davidimrie@mcgrath.com.au
+            and mobile of +61 8093 9621
+            status is Client
+            currency is AUD
+
+        Lead 2:
+            Huston Texas
+            with ID of 14646
+            and email of davidimrie@mcgrath.com.au
+            and mobile of +61 8093 9621
+            status is Client
+            currency is AUD
+
+        Lead 3:
+            Marie Curry
+            with ID of 14647
+            and email of davidimrie@mcgrath.com.au
+            and mobile of +61 8093 9621
+            status is Client
+            currency is AUD
+
+        Lead 4:
+            Stephen Wallace
+            with ID of 14648
+            and email of davidimrie@mcgrath.com.au
+            and mobile of +61 8093 9621
+            status is Client
+            currency is AUD
+
+    WHEN:
+        The 30 second syncer is triggered via cronjob
+    THEN:
+        Xero client will save all clients as Contacts in a batch with a single call
+        Batch collection will be empty
+        Contact 1:
+            with ContactNumber field to be "14645"
+            and AccountNumber field to be "DI-14645"
+            and ContactStatus field to be "ACTIVE"
+            and Name field to be "David Imrie"
+            and FirstName field to be "David"
+            and LastName field to be "Imrie"
+            and EmailAddress field to be "davidimrie@mcgrath.com.au"
+            and DefaultCurrency field to be "AUD"
+
+        Contact 2:
+            with ContactNumber field to be "14646"
+            and AccountNumber field to be "HT-14646"
+            and ContactStatus field to be "ACTIVE"
+            and Name field to be "Huston Texas"
+            and FirstName field to be "Huston"
+            and LastName field to be "Texas"
+            and EmailAddress field to be "davidimrie@mcgrath.com.au"
+            and DefaultCurrency field to be "AUD"
+
+        Contact 3:
+            with ContactNumber field to be "14647"
+            and AccountNumber field to be "MC-14647"
+            and ContactStatus field to be "ACTIVE"
+            and Name field to be "Marie Curry"
+            and FirstName field to be "Marie"
+            and LastName field to be "Curry"
+            and EmailAddress field to be "davidimrie@mcgrath.com.au"
+            and DefaultCurrency field to be "AUD"
+
+         Contact 4:
+            with ContactNumber field to be "14648"
+            and AccountNumber field to be "SW-14648"
+            and ContactStatus field to be "ACTIVE"
+            and Name field to be "Stephen Wallace"
+            and FirstName field to be "Stephen"
+            and LastName field to be "Wallace"
+            and EmailAddress field to be "davidimrie@mcgrath.com.au"
+            and DefaultCurrency field to be "AUD"
+
+
+
+SCENARIO 2:
+    4 clients are updated to the system and xero responds with 503 error [Unhappy Path]
+
+    GIVEN:
+        Lead 1:
+            David Imrie
+            with ID of 14645
+            and email of davidimrie@mcgrath.com.au
+            and mobile of +61 8093 9621
+            status is Client
+            currency is AUD
+
+        Lead 2:
+            Huston Texas
+            with ID of 14646
+            and email of davidimrie@mcgrath.com.au
+            and mobile of +61 8093 9621
+            status is Client
+            currency is AUD
+
+        Lead 3:
+            Marie Curry
+            with ID of 14647
+            and email of davidimrie@mcgrath.com.au
+            and mobile of +61 8093 9621
+            status is Client
+            currency is AUD
+
+        Lead 4:
+            Stephen Wallace
+            with ID of 14648
+            and email of davidimrie@mcgrath.com.au
+            and mobile of +61 8093 9621
+            status is Client
+            currency is AUD
+
+    WHEN:
+        Xero Client responds with a 503 error code
+    THEN:
+        A history of the error will be recorded

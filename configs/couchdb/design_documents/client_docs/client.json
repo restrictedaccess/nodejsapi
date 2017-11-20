@@ -1,0 +1,39 @@
+{
+   "_id": "_design/client",
+   "language": "javascript",
+   "views": {
+       "last_order_id": {
+           "map": "function(doc) {\n  if (doc.type == 'order') {\n  emit([doc.client_id, doc.order_id], null);\n}\n}"
+       },
+       "credit_accounting_transactions": {
+           "map": "function(doc) {\n  if (doc.type == 'credit accounting') {\n  emit([doc.client_id, doc.added_on], doc);\n}\n}"
+       },
+       "balance_since": {
+           "map": "function(doc) {\n  if (doc.type == 'credit accounting') {\n  emit([doc.client_id, doc.added_on], parseFloat(doc.charge) * - 1);\n  emit([doc.client_id, doc.added_on], parseFloat(doc.credit));\n}\n}",
+           "reduce": "function(keys, values) {\n  return sum(values);\n}"
+       },
+       "settings": {
+           "map": "function(doc) {\n  if (doc.type == 'client settings') {\n  emit([doc.client_id, doc.timestamp], [doc.currency, doc.apply_gst]);\n}\n}"
+       },
+       "new_orders": {
+           "map": "function(doc) {\n  if ((doc.type == 'order') && (doc.status == 'new')) {\n  emit([doc.client_id, doc.order_id], null);\n}\n}"
+       },
+       "credit_accounting_doc_count": {
+           "map": "function(doc) {\n  if (doc.type == 'credit accounting') {\n  emit([doc.client_id, doc.added_on], 1);\n}\n}",
+           "reduce": "function(keys, values) {\n  return sum(values);\n}"
+       },
+       "running_balance": {
+           "map": "function(doc) {\n  if (doc.type == 'credit accounting') {\n  emit(doc.client_id, parseFloat(doc.charge) * - 1);\n  emit(doc.client_id, parseFloat(doc.credit));\n}\n}",
+           "reduce": "function(keys, values) {\n  return sum(values);\n}"
+       },
+       "mq_created_order": {
+           "map": "function(doc) {\n  if (doc.type == 'order' && doc.status == 'new') {\n    emit([doc.client_id, doc.added_on], null);\n  }\n}"
+       },
+       "emails": {
+           "map": "function(doc) {\n  if (doc.type == 'client_email') {\n  emit(doc.client_id, null);\n}\n}"
+       },
+       "subcontractors_invoice_setup_id": {
+           "map": "function(doc) {\n  if (doc.type == 'order' && doc.status == 'new' && doc.added_by == 'MQ First Months Invoice' && doc.subcontractors_invoice_setup__id != null) {\n    emit([doc.subcontractors_invoice_setup__id, doc.added_on], null);\n  }\n}"
+       }
+   }
+}

@@ -1,0 +1,42 @@
+<div style="font-family: Tahoma; font-size: 14px; line-height: 25px;">
+
+	Hi {{ doc.client_fname|title }} {{ doc.client_lname|title }},<br><br>
+	
+	
+{% if doc.status == 'paid' %}
+	{% if doc.overpayment_from == 'paid' %}
+	
+        Below and attached is your invoice from <strong>overpaying</strong> {{ doc.overpayment_from }}.
+        <br>
+    {% else %}
+        
+            Below and attached is your first month invoice. Your current available balance ({{ doc.currency }} {% if doc.currency == 'GBP' %}&#163;{% else %}${% endif %}{{ doc.running_balance }} ) can cover this invoice and we will continue processing it.
+       <br>
+    {% endif %}
+    
+{% endif %}    
+
+    
+{% if doc.status != 'paid' %}
+
+	
+        Please find attached latest Remote Staff Tax Invoice.<br>
+          
+        {% if doc.pay_before_date %}        
+            Please make payments on or before <span style="text-decoration: underline; font-weight: bold;">{{ doc.pay_before_date_ordinal_string }}</span>.
+        
+        {% endif %}
+
+		{% if doc.client_basic_info.days_before_suspension != -30 %}
+       		To avoid temporary suspension of your account.
+        {% endif %}
+   
+    	<br><br>
+    	
+{% endif %} 
+
+    * If you have previously filled a direct debit form and agreed to be on direct debit with us, this email is just for your record. We will just process the payment for you.
+    <br><br>
+    
+{% block content %}{% endblock %}
+</div>

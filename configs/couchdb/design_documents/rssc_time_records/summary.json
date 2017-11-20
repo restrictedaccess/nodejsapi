@@ -1,0 +1,18 @@
+{
+   "_id": "_design/summary",
+   "language": "javascript",
+   "views": {
+       "in_out": {
+           "map": "function(doc) {\n  if (doc.type == 'timerecord' && doc.time_out != false) {\n    emit(doc.time_in, doc.time_out);\n  }\n}"
+       },
+       "userid_lunch_start": {
+           "map": "function(doc) {\n  if (doc.type == 'lunchrecord' && doc.end != null) {\n    emit([doc.userid, doc.start], null);\n  }\n}"
+       },
+       "working": {
+           "map": "function(doc) {\n  if (doc.type == 'timerecord' && doc.time_out == false) {\n    emit(doc.time_in, null);\n  }\n}"
+       },
+       "lunch_in_out": {
+           "map": "function(doc) {\n  if (doc.type == 'lunchrecord' && doc.end != null) {\n    emit(doc.start, doc.end);\n  }\n}"
+       }
+   }
+}

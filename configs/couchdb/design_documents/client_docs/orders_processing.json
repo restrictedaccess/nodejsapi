@@ -1,0 +1,9 @@
+{
+   "_id": "_design/orders_processing",
+   "language": "javascript",
+   "views": {
+       "has_item_type": {
+           "map": "function(doc) {\n  if (doc.type == 'order' && doc.status == 'paid' && doc.items.length > 0 && doc.items_charged != \"Y\") {\n    var has_item_type = false;\n    for (var idx in doc.items) {\n      if (doc.items[idx].item_type) {\n        has_item_type = true;\n      }\n    }\n    if (has_item_type == true) {\n      emit(null, null);\n    }\n  }\n}"
+       }
+   }
+}

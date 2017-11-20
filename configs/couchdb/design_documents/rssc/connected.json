@@ -1,0 +1,12 @@
+{
+   "_id": "_design/connected",
+   "language": "javascript",
+   "views": {
+       "last_seen_date": {
+           "map": "function(doc) {\n  if (doc.type == 'users' && doc.user_type == 'staff' && doc.connected == true){\n  emit(doc.last_seen, null);\n}\n}"
+       },
+       "last_seen": {
+           "map": "function(doc) {\n  if (doc.type == 'users' && doc.user_type == 'staff' && doc.connected == true){\n  emit(doc.reference_id, doc.last_seen);\n}\n}"
+       }
+   }
+}

@@ -1,0 +1,12 @@
+{
+   "_id": "_design/reports",
+   "language": "javascript",
+   "views": {
+       "not_charged": {
+           "map": "function(doc) {\n  if (typeof doc.doc_charge == \"undefined\" && doc.type == 'timerecord') {\n    emit(doc.time_in, ['time record', doc.time_out, doc.leads_id, doc.subcontractors_id]);\n  }\n}"
+       },
+       "not_charged_per_client": {
+           "map": "function(doc) {\n  if (typeof doc.doc_charge == \"undefined\" && doc.type == 'timerecord') {\n    emit([doc.leads_id, doc.time_in], ['time record', doc.time_out, doc.userid, doc.subcontractors_id]);\n  }\n}"
+       }
+   }
+}

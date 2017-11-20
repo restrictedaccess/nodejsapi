@@ -1,0 +1,491 @@
+Happy path invoice creation
+
+Scenario1 : Due Date should be 5 business days from Invoice Date.
+
+
+GIVEN:
+	Client Mark Liddle – Old Client (-30)
+	Staff Efigenio IV Rodriguez [ #2708 - ACTIVE ]
+	Invocie Date – June 4,2017
+WHEN:
+ 	5th of the month invoices will be created.
+
+THEN:
+STEP 1:
+	Check if due date is 5 business days from invoice date.
+
+	Invoice Date : June 5 , 2017 (Monday)
+	Due Date: June 12, 2017 (Monday)
+
+
+
+Scenario 2 : Invoice created must be inserted to client_docs (Mongo and Couch)
+
+GIVEN:
+
+Client:
+•	Id:6071
+•	FirstName: Mark
+•	LastName: Liddle
+•	Email: mark.liddle@itmildura.com.au
+•	Currency: AUD
+•	Apply_gst: Y
+
+Subcontractor:
+•	Id: 2708
+•	FirstName: Efigenio
+•	LastName: Rodriguez
+•	current_rate: 38.00
+•	client_price: 1624.13
+•	hrs_per_day: 8
+•	hourly_rate: 9.37 (((client_price * 12 / 52 / 5 / hrs_per_day ) *100)/100)
+•	job_designation: Full-Time – Front End Developer
+Subcontractors Client Rate:
+•	subcontractors_id is 2708
+•	start_date is 2011-07-04 00:00:00
+•	end_date is 2017-06-02 19:55:09
+•	rate is 1450.00
+•	work_status is Full-Time
+
+Currency Adjustment Regular Invoicing 1:
+•	currency is AUD
+•	rate is  37.5
+•	effective date is May 2017
+
+
+Timesheet: Month of May
+•	Week 1 (01-05) : 45
+•	Week 2 (08-12) : 45
+•	Week 3 (15-19) : 45
+•	Week 4 (22-26) : 45
+•	Week 5 (29-31) : 27
+•	Total Adjusted Hours: 184
+•	Total Hours Charged to client: 184
+
+
+
+Timesheet: Month of June
+•	Week 1 (01-02) : 16
+•	Week 2 (05-09) : 40
+•	Week 3 (12-16) : 40
+•	Week 4 (19-23) : 40
+•	Week 5 (26-30) : 40
+•	Total Hours Charged to client: 176
+
+Invocie Date – June 4,2017
+Due Date – 5 business days from Invoice Date
+
+When:
+	Invoice created is saved to our system.
+
+Then:
+
+pay_before_date should be 2017-06-09 00:00:00
+	order_id should be 6071-00000001
+	type should be ‘order’
+	payment_advise should be false
+	apply_gst should be ‘Y’
+	currency should be “AUD”
+	status should be “new”
+	sub_total should be 1671.2
+	gst_amount should be 167.12
+	total_amount should be 1838.32
+
+
+Added invoice items:
+
+	Item 1: (Items from Timesheet)
+
+•	current_rate : 38
+•	description : “Efigenio IV Rodriguez ]Full Time – Front End Developer]”
+•	end_date : “2017-06-30T00:00.00Z”
+•	start_date : “2017-06-01T00:00.00Z”
+•	item_type : “Regular Rostered Hours”
+•	job_designation: “Full Time – Front End Developer”
+•	qty: 176
+•	unit_price : 9.37
+•	amount: 1649.12
+•	subcontractors_id : 2708
+
+Item 2: (Items from Currency Adjustments)
+
+•	current_rate : 38.00
+•	description : “Currency Adjustment (Contract Rate 1 AUD = 38 PESO VS Current Rate 1 AUD = 37.5 PESO, Currency Difference of 0.5 PESO for your staff Enrique Ogtip)(Actual Working Hours of 184 from May 1, 2017 to May 31, 2017)(Hourly Rate 8.37)/Current Rate 38”
+•	end_date : “2017-05-31T00:00.00Z”
+•	start_date : “2017-05-01T00:00.00Z”
+•	item_type : “Regular Rostered Hours”
+•	job_designation: “Full Time – Front End Developer”
+•	qty: 184
+•	unit_price : 0.11 ((hourly_rate* (current_rate-forex_rate))/forex_rate)
+•	amount: 20.24
+•	subcontractors_id : 2708
+•	subcontractors_id : 2708
+•	total_hours: 176 ((working_days * hrs_per_day * 100 )/100)
+
+
+
+
+// W/Change Rate
+Scenario 3 : Invoice created with subcontractors change of rate
+
+GIVEN:
+
+Client:
+•	Id:6071
+•	FirstName: Mark
+•	LastName: Liddle
+•	Email: mark.liddle@itmildura.com.au
+•	Currency: AUD
+•	Apply_gst: Y
+
+Subcontractor:
+•	Id: 2708
+•	FirstName: Efigenio
+•	LastName: Rodriguez
+•	current_rate: 38.00
+•	client_price: 1624.13
+•	hrs_per_day: 8
+•	hourly_rate: 9.37 (((client_price * 12 / 52 / 5 / hrs_per_day ) *100)/100)
+•	job_designation: Full-Time – Front End Developer
+Subcontractors Client Rate 1:
+•	subcontractors_id is 2708
+•	start_date is 2011-07-04 00:00:00
+•	end_date is 2017-06-02 19:55:09
+•	rate is 1450.00
+•	work_status is Full-Time
+
+Subcontractors Client Rate 2:
+•	subcontractors_id is 2708
+•	start_date is 2017-06-02 19:55:09
+•	end_date is null
+•	rate is 1624.13
+•	work_status is Full-Time
+
+
+
+Currency Adjustment Regular Invoicing 1:
+•	currency is AUD
+•	rate is  37.5
+•	effective date is May 2017
+
+
+Timesheet: Month of May
+•	Week 1 (01-05) : 45
+•	Week 2 (08-12) : 45
+•	Week 3 (15-19) : 45
+•	Week 4 (22-26) : 45
+•	Week 5 (29-31) : 27
+•	Total Adjusted Hours: 184
+•	Total Hours Charged to client: 184
+
+Timesheet: Month of June
+•	Week 1 (01-02) : 16
+•	Week 2 (05-09) : 40
+•	Week 3 (12-16) : 40
+•	Week 4 (19-23) : 40
+•	Week 5 (26-30) : 40
+•	Total Hours Charged to client: 176
+
+Invoice Date – June 4,2017
+Due Date – 5 business days from Invoice Date
+
+When:
+	Invoice created is saved to our system.
+
+Then:
+	pay_before_date should be 2017-06-09 00:00:00
+	order_id should be 6071-00000001
+	type should be ‘order’
+	payment_advise should be false
+	apply_gst should be ‘Y’
+	currency should be “AUD”
+	status should be “new”
+	sub_total should be 1669.36
+	gst_amount should be 166.94
+	total_amount should be 1836.3
+Added invoice items:
+
+	Item 1: (Items from Timesheet)
+
+•	current_rate : 38
+•	description : “Efigenio IV Rodriguez ]Full Time – Front End Developer]”
+•	end_date : “2017-07-30T00:00.00Z”
+•	start_date : “2017-07-01T00:00.00Z”
+•	item_type : “Regular Rostered Hours”
+•	job_designation: “Full Time – Front End Developer”
+•	qty: 166
+•	unit_price : 9.37
+•	amount: 1555.42
+•	subcontractors_id : 2708
+
+	Item 2: (Items from Timesheet)
+
+•	current_rate : 38
+•	description : “Efigenio IV Rodriguez ]Full Time – Front End Developer]”
+•	end_date : “2017-05-31T00:00.00Z”
+•	start_date : “2017-05-01T00:00.00Z”
+•	item_type : “Adjustment Over Time Work”
+•	job_designation: “Full Time – Front End Developer”
+•	qty: 0
+•	unit_price : 9.37
+•	amount: 0
+•	subcontractors_id : 2708
+
+Item 3: (Items from Currency Adjustments)
+
+•	current_rate : 38.00
+•	description : “Currency Adjustment (Contract Rate 1 AUD = 38 PESO VS Current Rate 1 AUD = 37.5 PESO, Currency Difference of 0.5 PESO for your staff Enrique Ogtip)(Actual Working Hours of 184 from May 1, 2017 to May 31, 2017)(Hourly Rate 8.37)/Current Rate 38”
+•	end_date : “2017-05-31T00:00.00Z”
+•	start_date : “2017-05-01T00:00.00Z”
+•	item_type : “Regular Rostered Hours”
+•	job_designation: “Full Time – Front End Developer”
+•	qty: 184
+•	unit_price : 0.11 ((hourly_rate* (current_rate-forex_rate))/forex_rate)
+•	amount: 20.24
+•	subcontractors_id : 2708
+
+
+
+
+// W/Overtime
+Scenario 4 : Invoice created with subcontractor overtime adjustment
+
+GIVEN:
+
+Client:
+•	Id:6071
+•	FirstName: Mark
+•	LastName: Liddle
+•	Email: mark.liddle@itmildura.com.au
+•	Currency: AUD
+•	Apply_gst: Y
+
+Subcontractor:
+•	Id: 2708
+•	FirstName: Efigenio
+•	LastName: Rodriguez
+•	current_rate: 38.00
+•	client_price: 1624.13
+•	hrs_per_day: 8
+•	hourly_rate: 9.37 (((client_price * 12 / 52 / 5 / hrs_per_day ) *100)/100)
+•	job_designation: Full-Time – Front End Developer
+Subcontractors Client Rate:
+•	subcontractors_id is 2708
+•	start_date is 2011-07-04 00:00:00
+•	end_date is 2017-06-02 19:55:09
+•	rate is 1450.00
+•	work_status is Full-Time
+
+Currency Adjustment Regular Invoicing 1:
+•	currency is AUD
+•	rate is  37.5
+•	effective date is May 2017
+
+
+Timesheet: Month of May
+•	Week 1 (01-05) : 45
+•	Week 2 (08-12) : 45
+•	Week 3 (15-19) : 45
+•	Week 4 (22-26) : 45
+•	Week 5 (29-31) : 27
+•	Total Adjusted Hours: 207
+•	Total Hours Charged to client: 184
+
+Timesheet: Month of June
+•	Week 1 (01-02) : 16
+•	Week 2 (05-09) : 40
+•	Week 3 (12-16) : 40
+•	Week 4 (19-23) : 40
+•	Week 5 (26-30) : 40
+•	Total Hours Charged to client: 176
+
+Invoice Date – June 4,2017
+Due Date – June 9, 2017 (5 business days from Invoice Date)
+
+When:
+	Invoice created is saved to our system.
+
+Then:
+	pay_before_date should be 2017-06-09 00:00:00
+	order_id should be 6071-00000001
+	type should be ‘order’
+	payment_advise should be false
+	apply_gst should be ‘Y’
+	currency should be “AUD”
+	status should be “new”
+	sub_total should be 1889.47
+	gst_amount should be 188.95
+	total_amount should be 2078.42
+
+
+Added invoice items:
+
+	Item 1: (Items from Timesheet)
+
+•	current_rate : 38
+•	description : “Efigenio IV Rodriguez ]Full Time – Front End Developer]”
+•	end_date : “2017-06-30T00:00.00Z”
+•	start_date : “2017-06-01T00:00.00Z”
+•	item_type : “Regular Rostered Hours”
+•	job_designation: “Full Time – Front End Developer”
+•	qty: 176
+•	unit_price : 9.37
+•	amount: 1649.12
+•	subcontractors_id : 2708
+
+
+	Item 2: (Items from Timesheet OverTime)
+
+•	current_rate : 38
+•	description : “Efigenio IV Rodriguez ]Full Time – Front End Developer]”
+•	end_date : “2017-05-31T00:00.00Z”
+•	start_date : “2017-05-01T00:00.00Z”
+•	item_type : “Adjustment Over Time Work”
+•	job_designation: “Full Time – Front End Developer”
+•	qty: 23
+•	unit_price : 9.37
+•	amount: 215.51
+•	subcontractors_id : 2708
+
+Item 3: (Items from Currency Adjustments)
+
+•	current_rate : 38.00
+•	description : “Currency Adjustment (Contract Rate 1 AUD = 38 PESO VS Current Rate 1 AUD = 37.5 PESO, Currency Difference of 0.5 PESO for your staff Enrique Ogtip)(Actual Working Hours of 207 from May 1, 2017 to May 31, 2017)(Hourly Rate 8.37)/Current Rate 38”
+•	end_date : “2017-05-31T00:00.00Z”
+•	start_date : “2017-05-01T00:00.00Z”
+•	item_type : “Currency Adjustment”
+•	job_designation: “Full Time – Front End Developer”
+•	qty: 207
+•	unit_price : 0.12 ((hourly_rate* (current_rate-forex_rate))/forex_rate)
+•	amount: 24.84
+•	subcontractors_id : 2708
+
+
+
+
+
+
+
+
+// W/Undertime
+Scenario 5 : Invoice created with subcontractor Un-Used Hour adjustment
+
+GIVEN:
+
+Client:
+•	Id:6071
+•	FirstName: Mark
+•	LastName: Liddle
+•	Email: mark.liddle@itmildura.com.au
+•	Currency: AUD
+•	Apply_gst: Y
+
+Subcontractor:
+•	Id: 2708
+•	FirstName: Efigenio
+•	LastName: Rodriguez
+•	current_rate: 38.00
+•	client_price: 1624.13
+•	hrs_per_day: 8
+•	hourly_rate: 9.37 (((client_price * 12 / 52 / 5 / hrs_per_day ) *100)/100)
+•	job_designation: Full-Time – Front End Developer
+Subcontractors Client Rate:
+•	subcontractors_id is 2708
+•	start_date is 2011-07-04 00:00:00
+•	end_date is 2017-06-02 19:55:09
+•	rate is 1450.00
+•	work_status is Full-Time
+
+Currency Adjustment Regular Invoicing 1:
+•	currency is AUD
+•	rate is  37.5
+•	effective date is May 2017
+•
+
+
+Timesheet: Month of May
+•	Week 1 (01-05) : 45
+•	Week 2 (08-12) : 45
+•	Week 3 (15-19) : 45
+•	Week 4 (22-26) : 45
+•	Week 5 (29-31) : 27
+•	Total Adjusted Hours: 172.5
+•	Total Hours Charged to client: 184
+
+
+Timesheet: Month of June
+•	Week 1 (01-02) : 16
+•	Week 2 (05-09) : 40
+•	Week 3 (12-16) : 40
+•	Week 4 (19-23) : 40
+•	Week 5 (26-30) : 40
+•	Total Hours Charged to client: 176
+
+Invoice Date – June 4,2017
+Due Date – 5 business days from Invoice Date
+
+When:
+	Invoice created is saved to our system.
+
+Then:
+	pay_before_date should be 2017-06-09 00:00:00
+	order_id should be 6071-00000001
+	type should be ‘order’
+	payment_advise should be false
+	apply_gst should be ‘Y’
+	currency should be “AUD”
+	status should be “new”
+	sub_total should be 1562.06
+	gst_amount should be 156.21
+	total_amount should be 1718.27
+
+
+
+Added invoice items:
+
+	Item 1: (Items from Timesheet)
+
+•	current_rate : 38
+•	description : “Efigenio IV Rodriguez ]Full Time – Front End Developer]”
+•	end_date : “2017-07-30T00:00.00Z”
+•	start_date : “2017-07-01T00:00.00Z”
+•	item_type : “Regular Rostered Hours”
+•	job_designation: “Full Time – Front End Developer”
+•	qty: 176
+•	unit_price : 9.37
+•	amount: 1649.12
+•	subcontractors_id : 2708
+
+
+
+Item 2: (Items from  Undertime Work)
+
+•	current_rate : 38
+•	description : Efigenio IV Rodriguez [Full Time – Front End Developer] (May Un-Used Hour) Adjustment Credit Memo
+•	end_date : “2017-05-31T16:00.00Z”
+•	start_date : “2017-05-01T00:00.00Z”
+•	item_type : “Adjustment Credit Memo”
+•	job_designation: “Full Time – Front End Developer”
+•	qty: -11.5
+•	unit_price: 9.37
+•	amount: -107.55
+•	subcontractors_id : 2708
+
+
+
+Item 3: (Items from Currency Adjustments)
+
+•	current_rate : 38.00
+•	description : “Currency Adjustment (Contract Rate 1 AUD = 38 PESO VS Current Rate 1 AUD = 37.5 PESO, Currency Difference of 0.5  PESO for your staff Efigenio IV Rodriguez)(Actual Working Hours of 172.5 from May 1, 2017 to May 31, 2017)(Hourly Rate 9.37)/Current Rate 37.5”
+
+•	end_date : “2017-05-31T00:00.00Z”
+•	start_date : “2017-05-01T00:00.00Z”
+•	item_type : “Currency Adjustment”
+•	job_designation: “Full Time – Front End Developer”
+•	qty: 172.5
+•	unit_price : 0.12 ((hourly_rate* (current_rate-forex_rate))/forex_rate)
+•	amount: 20.7
+•	subcontractors_id : 2708
+
+
+

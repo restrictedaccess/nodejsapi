@@ -1,0 +1,9 @@
+{
+   "_id": "_design/nab",
+   "language": "javascript",
+   "views": {
+       "get_nab_transact": {
+           "map": "function(doc) {\n  if (doc.type==\"nab_eps_transaction\"){\n\n  emit(null, doc);\n  }\n}"
+       }
+   }
+}

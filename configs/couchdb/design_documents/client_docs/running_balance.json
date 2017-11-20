@@ -1,0 +1,12 @@
+{
+   "_id": "_design/running_balance",
+   "language": "javascript",
+   "filters": {
+       "not_mongo_synced": "function(doc, req){return (doc.type=='credit accounting'&&(typeof doc.mongo_synced == 'undefined' || doc.mongo_synced == false));}"
+   },
+   "views": {
+       "list_running_balance": {
+           "map": "function(doc,req){\nif (doc.type=='credit accounting'&&(typeof doc.mongo_synced == 'undefined' || doc.mongo_synced == false)){\nemit([doc.client_id, doc.added_on], doc);\n}\n}"
+       }
+   }
+}

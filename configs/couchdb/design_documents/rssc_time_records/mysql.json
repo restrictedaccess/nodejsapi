@@ -1,0 +1,24 @@
+{
+   "_id": "_design/mysql",
+   "language": "javascript",
+   "views": {
+       "quick_break_end": {
+           "map": "function(doc) {\n  if (doc.sync_in != null && doc.type == 'quick_break' && doc.sync_out == null && doc.end != null) {\n  emit(doc.sync_in, doc);\n  }\n}"
+       },
+       "lunch_start": {
+           "map": "function(doc) {\n  if (doc.sync_in == null && doc.type == 'lunchrecord') {\n  emit(doc.start, doc);\n  }\n}"
+       },
+       "lunch_end": {
+           "map": "function(doc) {\n  if (doc.sync_in != null && doc.type == 'lunchrecord' && doc.sync_out == null && doc.end != null) {\n  emit(doc.sync_in, doc);\n  }\n}"
+       },
+       "time_in": {
+           "map": "function(doc) {\n  if (doc.sync_in == null && doc.type == 'timerecord') {\n  emit(doc.time_in, doc);\n  }\n}"
+       },
+       "time_out": {
+           "map": "function(doc) {\n  if (doc.sync_in != null && doc.type == 'timerecord' && doc.sync_out == null && doc.time_out != false) {\n  emit(doc.sync_in, doc);\n  }\n}"
+       },
+       "quick_break_start": {
+           "map": "function(doc) {\n  if (doc.sync_in == null && doc.type == 'quick_break') {\n  emit(doc.start, doc);\n  }\n}"
+       }
+   }
+}

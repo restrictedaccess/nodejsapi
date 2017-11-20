@@ -1,0 +1,9 @@
+{
+   "_id": "_design/rssc_reports",
+   "language": "javascript",
+   "views": {
+       "userid_timein": {
+           "map": "function(doc) {\n  if (doc.type == 'timerecord') {\n    emit([doc.userid, doc.time_in], ['time record', doc.time_out, doc.leads_id, doc.subcontractors_id]);\n  }\n  if (doc.type == 'lunchrecord') {\n    emit([doc.userid, doc.start], ['lunch record', doc.end, doc.leads_id, doc.subcontract_id]);\n  }\n  if (doc.type == 'quick_break') {\n    emit([doc.userid, doc.start], ['quick break', doc.end, doc.leads_id, doc.subcontractors_id]);\n  }\n}"
+       }
+   }
+}

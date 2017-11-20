@@ -1,0 +1,18 @@
+{
+   "_id": "_design/reports",
+   "language": "javascript",
+   "views": {
+       "rssc_prepaid_on_finish_work": {
+           "map": "function(doc) {\n  if (doc.added_by== 'RSSC Prepaid On Finish Work' && doc.remarks == 'Generated from time sheet') {\n    var description = '';\n    for (item in doc.items) {\n      description += doc.items[item]['description'] + ' ';\n    }\n    emit([doc.added_on], doc);\n  }\n}"
+       },
+       "all_orders_except_cancelled_via_added_on": {
+           "map": "function(doc) {\n  if (doc.type == 'order' && doc.status != 'cancelled') {\n    var description = '';\n    for (item in doc.items) {\n      description += doc.items[item]['description'] + ' ';\n    }\n    emit([doc.added_on[0]], \n      {'status':doc.status, \n       'total_amount': doc.total_amount,\n       'order_date': doc.added_on,\n       'description': description,\n       'currency': doc.currency,\n       'client_name' : doc.client_fname+' '+doc.client_lname,\n       'client_id' : doc.client_id,\n       'apply_gst' : doc.apply_gst,\n       'order_id' : doc.order_id,\n       'items' : doc.items,\n       'pay_before_date' : doc.pay_before_date\n      });\n  }\n}"
+       },
+       "all_orders": {
+           "map": "function(doc) {\n  if (doc.type == 'order') {\n    var description = '';\n    for (item in doc.items) {\n      description += doc.items[item]['description'] + ' ';\n    }\n    emit(doc.added_on, \n      {'status':doc.status, \n       'total_amount': doc.total_amount,\n       'order_date': doc.added_on,\n       'description': description,\n       'currency': doc.currency\n      });\n  }\n}\n"
+       },
+       "all_invoices": {
+           "map": "function(doc) {\n  if (doc.type == 'order') {\n    var description = '';\n    for (item in doc.items) {\n      description += doc.items[item]['description'] + ' ';\n    }\n    emit([doc.currency, doc.apply_gst,doc.added_on], \n      {'status':doc.status,\n       'client_name' : doc.client_fname+' '+doc.client_lname,\n       'order_id' : doc.order_id,\n       'status' : doc.status,\n       'order_date': doc.added_on,\n       'pay_before_date' : doc.pay_before_date,\n       'payment_mode' : doc.payment_mode,\n       'date_paid' : doc.date_paid,\n       'currency': doc.currency,\n       'apply_gst' : doc.apply_gst,\n       'total_amount': doc.total_amount,\n       'zero_to_negative_day_notice': doc.zero_to_negative_day_notice,\n       'days_running_low': doc.days_running_low\n      });\n  }\n}"
+       }
+   }
+}

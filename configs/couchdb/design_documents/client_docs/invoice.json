@@ -1,0 +1,12 @@
+{
+   "_id": "_design/invoice",
+   "language": "javascript",
+   "filters": {
+       "not_mongo_synced": "function(doc, req){return (doc.type=='order'&&(typeof doc.mongo_synced == 'undefined' || doc.mongo_synced == false));}"
+   },
+   "views": {
+       "list_invoice": {
+           "map": "function(doc,req){\nif (doc.type=='order'&&(typeof doc.mongo_synced == 'undefined' || doc.mongo_synced == false)){\nemit([doc.client_id, doc.added_on], doc);\n}\n}"
+       }
+   }
+}

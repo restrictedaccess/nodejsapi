@@ -1,0 +1,90 @@
+{% extends 'template.html' %}
+
+{% block content %}
+
+	Dear {{ doc.client_fname|title }} {{ doc.client_lname|title }},<br><br>
+	
+	
+	Please see attached a PDF copy of your current Think Innovation Pty Ltd. - trading as Remote Staff invoice.
+	Please make payments on or before <strong>{{ doc.pay_before_date_ordinal_string }}</strong>
+	<br>
+	<br>	
+	Your invoice summary is displayed below.
+	<br>
+	<br>
+	<br>
+
+	
+	<h2 align="center">Tax Invoice Number {{ doc.order_id }}</h2>
+	<table cellspacing="1" cellpadding="5" style="width: 100%; font-family:Verdana, Geneva, sans-serif; font-size:12px; background: #EEE;">
+		<thead>
+			<tr bgcolor="#f3f3f3">
+				<th style="width: 6%;">Item No.</th>
+				<th style="width: 18%; text-align: center;">Cover Date</th>
+				<th style="">Description</th>            							           			
+				<th style="text-align: right;">Quantity</th>
+				<th style="width: 9%; text-align: right;">Unit Price</th>
+				<th style="width: 10%; text-align: right;">Amount</th>
+			</tr>
+		</thead>
+		<tbody>
+			
+			{% for item in doc.items %}  			
+	  			<tr bgcolor="#FFF">
+	  				<td >{{ item.item_id }}</td>
+	  				<td style="text-align:center;" >{{ item.start_date }} - {{ item.end_date }}</td>  				
+	  				<td >{{ item.description }}</td>  				
+	  				<td style="text-align: right">{{ item.qty }}</td>
+	  				<td style="text-align: right">
+	  					{% if doc.currency == 'GBP' %}&#163;{% else %}${% endif %}{{ item.unit_price }}
+	  				</td>
+	  			    <td style="text-align: right">
+						{% if doc.currency == 'GBP' %}&#163;{% else %}${% endif %}{{ item.amount }}
+					</td>
+	  			</tr>  			
+			{% endfor %}
+			
+		</tbody>
+		<tfoot>
+			<tr bgcolor="#FFF" >
+				<td colspan="4" align="right">&nbsp;</td>
+				<td align="right" >Subtotal</td>
+				<td align="right">{% if doc.currency == 'GBP' %}&#163;{% else %}${% endif %}{{ doc.sub_total_string }}</td>
+			</tr>
+			
+			<tr bgcolor="#FFF" >
+				<td colspan="4" align="right">&nbsp;</td>
+				<td align="right">GST</td>
+				<td align="right">{% if doc.currency == 'GBP' %}&#163;{% else %}${% endif %}{{ doc.gst_amount_string }}</td>
+			</tr>
+			
+			<tr bgcolor="#FFF" >
+				<td colspan="4" align="right">&nbsp;</td>
+				<td align="right"><strong>Total Amount</strong></td>
+				<td align="right" style="background:#a3e1d4;"><strong>{% if doc.currency == 'GBP' %}&#163;{% else %}${% endif %}{{ doc.total_amount_string }}</strong></td>
+			</tr>
+		</tfoot>
+	</table>
+	
+	<br>
+	<br>
+	<div align="right">
+		<a href="https://remotestaff.com.au/portal/v2/payments/top-up/{{ doc.order_id }}" style="display: inline-block; -webkit-box-sizing: content-box;  -moz-box-sizing: content-box;  box-sizing: content-box; cursor: pointer;  padding: 10px 20px;  border: 1px solid #018dc4; -webkit-border-radius: 3px; border-radius: 3px; font: Verdana 16px; color: white; background: #5095d6; text-decoration: none ;" >
+			View Invoice and Make Payment
+		</a>	
+	</div>
+	
+	
+	<br>
+	<br>
+	<em>* If you have previously filled-up a direct debit form and agreed to be on direct debit with us, this email is just for your reference. We will process the payment on your behalf If you have previously filled-up a direct debit form and agreed to be on direct debit with us, this email is just for your records. We will process the payment on your behalf on or before the invoice due date. </em>
+	
+	
+	<br>
+	<br>
+	Should you have any questions, please don't hesitate to contact us.<br><br>
+	accounts@remotestaff.com.au<br><br>
+	AUS +61 (02) 8073 4142 press 4 to pay over the phone<br>
+	USA +1 617 945 8437<br>
+	
+{% endblock %}

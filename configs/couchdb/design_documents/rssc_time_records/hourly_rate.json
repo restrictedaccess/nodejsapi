@@ -1,0 +1,9 @@
+{
+   "_id": "_design/hourly_rate",
+   "language": "javascript",
+   "views": {
+       "subcon_id-datetime": {
+           "map": "function(doc) {\n  if (doc.client_hourly_rate) {\n    emit([doc.subcontractors_id, doc.time_in], doc.client_hourly_rate);\n  }\n}"
+       }
+   }
+}

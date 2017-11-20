@@ -1,0 +1,39 @@
+{% block content %}
+<div style="background-color: #FFF; border: 1px solid #E1E1E8; border-radius: 4px 4px 4px 4px; box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset; margin-bottom: 20px;     min-height: 20px; padding: 19px; font-family:Verdana, Geneva, sans-serif; font-size:12px;">
+    <div style="margin-bottom:20px; border-bottom: 1px solid #ccc; margin-bottom: 20px;     padding-bottom: 20px;"><img src="http://remotestaff.com.au/remotestaff_2015/img/logo.png"></div>
+
+    <h2 align="center">Unsynced Invoices</h2>
+    <p><small>Note: Click on the order ID to view more details</small></p>
+    <br/>
+    <table cellspacing="1" cellpadding="5" style="width: 100%; font-family:Verdana, Geneva, sans-serif; font-size:12px; background: #EEE;">
+        <thead>
+        <tr bgcolor="#f3f3f3">
+            <th style="width: 20%; text-align: center;">Order ID</th>
+            <th style="width: 15%;text-align: center;">Current Status</th>
+            <th style="width: 15%;text-align: center;">Correct Status</th>
+            <th style="width: 30%; text-align: center;">Couch ID</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for item in report %}
+            <tr bgcolor="#FFF">
+                <td style="text-align: center;" ><a href="{{portal_url}}/accounts_v2/#/invoice/details/{{item.order_id}}" target="_blank">{{ item.order_id }}</a></td>
+                <td style="text-align: center;" >{{ item.mongo_status }}</td>
+                <td style="text-align: center;" >{{ item.couch_status }}</td>
+                <td style="text-align: center;">{{ item.couch_id }}</td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+
+    <br/>
+    <br/>
+    <p>This is a system generated email, do not reply to this email.</p>
+    <br />
+    <br />
+    <p>Remotestaff System</p>
+
+</div>
+
+{% endblock %}

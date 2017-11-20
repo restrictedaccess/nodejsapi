@@ -1,0 +1,30 @@
+{
+   "_id": "_design/dashboard",
+   "language": "javascript",
+   "views": {
+       "subcon_working_day": {
+           "map": "function(doc) {\n  if (doc.type == 'subcontractor' && doc.flexi == 'no' && doc.active == 'Y') {\n    for (var day in doc.daily_schedule) {\n      var start = doc.daily_schedule[day].start;\n      var end = doc.daily_schedule[day].end;\n      if ((start[0] == 0 && start[1] == 0 && start[2] == 0 && end[0] == 0 && end[1] == 0 && end[2] == 0) == true) {\n        continue;\n      }\n      else {\n        var istart = (start[0] * 60) + start[1];\n        var iend = (end[0] * 60) + end[1];\n        var xover = 0;\n        if (istart > iend) {\n          iend += 1440;\n          xover = 1;\n        }\n\n        //working on intervals\n        var interval = 30;  // 30 minutes\n        istart = Math.round(istart / interval);\n        iend = Math.round(iend / interval);\n\n        for (var i = istart; i < iend; i++ ) {\n          emit([day, xover, i], {start: start, end: end, staff:doc.staff, userid: doc.userid, client:doc.client, job_designation:doc.job_designation, leads_id:doc.leads_id});\n        }\n\n      }\n    }\n  }\n}"
+       },
+       "list_client_contracts": {
+           "map": "function(doc) {\n  if (doc.type == 'subcontractor' && doc.active == 'Y') {\n    var name = doc.staff.fname + ' ' + doc.staff.lname;\n    emit([doc.leads_id, name], {\n      intervals : doc.intervals,\n      bandwidth_test : doc.bandwidth_test,\n      finish_work_on_disconnect : doc.finish_work_on_disconnect\n    });\n  }\n}\n\n"
+       },
+       "list_client_names": {
+           "map": "function(doc) {\n  if (doc.type == 'subcontractor' && doc.active == 'Y') {\n    var client_name = trim(doc.client.fname + \" \" + doc.client.lname);\n    emit([client_name, doc.leads_id], 1);\n  }\n}\n\nfunction trim(s){\n  return ( s || '' ).replace( /^\\s+|\\s+$/g, '' ); \n}\n",
+           "reduce": "function(keys, values) {\n  return sum(values);\n}"
+       },
+       "working_staff": {
+           "map": "function(doc) {\n  if (doc.type == 'users' && doc.user_type == 'staff') {\n    if (doc.status in {'quick break':'', 'lunch break':'', 'working':''}) {\n      var client = doc.working_details.client_fname + ' ' + doc.working_details.client_lname;\n      emit(doc.reference_id, {fname:doc.fname, \n        lname:doc.lname, skype_id:doc.skype_id, status:doc.status, subcontract_id:doc.working_details.subcontract,\n        client: client, job_designation: doc.working_details.job_designation,\n        time_in: doc.working_details.time_in});\n    }\n  }\n}"
+       },
+       "list_staff_names": {
+           "map": "function(doc) {\n  if (doc.type == 'subcontractor' && doc.active == 'Y') {\n    emit([doc.staff.fname + \" \" + doc.staff.lname, doc.userid], 1);\n  }\n}",
+           "reduce": "function(keys, values) {\n  return sum(values);\n}"
+       },
+       "active_inactive_staff_names": {
+           "map": "function(doc) {\n  if (doc.type == 'subcontractor') {\n    emit([doc.staff.fname + \" \" + doc.staff.lname, doc.userid], 1);\n  }\n}",
+           "reduce": "function(keys, values) {\n  return sum(values);\n}"
+       },
+       "list_staff_contracts": {
+           "map": "function(doc) {\n  if (doc.type == 'subcontractor' && doc.active == 'Y') {\n    var client_name = trim(doc.client.fname + \" \" + doc.client.lname);\n    emit([doc.userid, client_name], {\n      intervals : doc.intervals,\n      bandwidth_test : doc.bandwidth_test,\n      finish_work_on_disconnect : doc.finish_work_on_disconnect\n    });\n  }\n}\n\nfunction trim(s){\n  return ( s || '' ).replace( /^\\s+|\\s+$/g, '' ); \n}\n"
+       }
+   }
+}

@@ -1,0 +1,68 @@
+FEATURE: System syncs clients to xero.com as contacts
+
+SCENARIO1: Lead becomes a client with at least 1 subcontractor (Happy Path)
+    Given:
+        Lead:
+            David Imrie
+            with ID of 14645
+            and email of davidimrie@mcgrath.com.au
+            and mobile of +61 8093 9621
+            status is Client
+            currency is AUD
+    When:
+        The new client is updated in our system
+    Then:
+        Xero client will save client as Contact
+        with ContactNumber field to be "14645"
+        and AccountNumber field to be "DI-14645"
+        and ContactStatus field to be "ACTIVE"
+        and Name field to be "David Imrie"
+        and FirstName field to be "David"
+        and LastName field to be "Imrie"
+        and EmailAddress field to be "davidimrie@mcgrath.com.au"
+        and DefaultCurrency field to be "AUD"
+
+
+
+
+    SCENARIO2: Client’s Information is updated in our system (Happy Path)
+    Given:
+        Lead:
+            David Imrie
+            with ID of 14645
+            and email davidimrie02@mcgrath.com.au
+            and mobile from +61 8093 9621 to +61 9642 6825
+            status is Client
+            currency is AUD
+        Existing Xero Contact Details:
+            ContactID is "33be2ffa-dc57-46ad-a688-4b66ff46c20f"
+            ContactNumber is "14645"
+    When:
+        The client’s information is saved in our system
+    Then:
+        Xero client will save client as Contact
+        with ContactNumber field to be "14645"
+        and ContactID field to be 33be2ffa-dc57-46ad-a688-4b66ff46c20f
+        and AccountNumber field to be "DI-14645"
+        and ContactStatus field to be "ACTIVE"
+        and Name field to be the combination of "David Imrie"
+        and FirstName field to be "David"
+        and LastName field to be "Imrie"
+        and EmailAddress field to be "davidimrie02@mcgrath.com.au"
+        and DefaultCurrency field to be "AUD"
+
+
+
+
+    SCENARIO3: Xero responds with 503 or 500 server error codes (Unhappy path)
+    Given:
+        Lead:
+            David Imrie
+            with ID of 14645
+            and email from davidimrie@mcgrath.com.au to davidimrie02@mcgrath.com.au
+            and mobile from +61 8093 9621 to +61 9642 6825
+            status is Client
+    When:
+        Xero responds with a 503 error code
+    Then:
+        A history of the error will be recorded

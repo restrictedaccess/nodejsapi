@@ -1,0 +1,15 @@
+{
+   "_id": "_design/rssc_time_records",
+   "language": "javascript",
+   "filters": {
+       "not_mongo_synced": "function(doc,req){ return ((doc.type == 'timerecord' &&(typeof doc.mongo_synced == 'undefined' || doc.mongo_synced == false)) || (doc.type == 'lunchrecord' &&(typeof doc.mongo_synced == 'undefined' || doc.mongo_synced == false)) || (doc.type == 'quick_break' &&(typeof doc.mongo_synced == 'undefined' || doc.mongo_synced == false))) }"
+   },
+   "views": {
+       "list_rssc_time_records": {
+           "map": "function(doc) {\n  if (doc.type == 'timerecord' &&(typeof doc.mongo_synced == 'undefined' || doc.mongo_synced == false)) {\n    emit([doc.userid, doc.subcontractors_id], doc);\n  }\n  if (doc.type == 'lunchrecord' &&(typeof doc.mongo_synced == 'undefined' || doc.mongo_synced == false)) {\n    emit([doc.userid, doc.subcontractors_id], doc);\n  }\n  if (doc.type == 'quick_break' &&(typeof doc.mongo_synced == 'undefined' || doc.mongo_synced == false)) {\n    emit([doc.userid, doc.subcontractors_id], doc);\n  }\n}"
+       },
+       "list_rssc_time_records_with_time_out": {
+           "map": "function(doc) {\n  if (doc.type == 'timerecord' &&(typeof doc.time_out != 'undefined' || doc.time_out != null ) &&(typeof doc.mongo_synced == 'undefined' || doc.mongo_synced == false)) {\n    emit([doc.userid, doc.subcontractors_id], doc);\n  }\n  if (doc.type == 'lunchrecord' &&(typeof doc.end != 'undefined' || doc.end != null ) &&(typeof doc.mongo_synced == 'undefined' || doc.mongo_synced == false)) {\n    emit([doc.userid, doc.subcontractors_id], doc);\n  }\n  if (doc.type == 'quick_break' &&(typeof doc.time_out != 'undefined' || doc.end != null ) &&(typeof doc.mongo_synced == 'undefined' || doc.mongo_synced == false)) {\n    emit([doc.userid, doc.subcontractors_id], doc);\n  }\n}"
+       }
+   }
+}

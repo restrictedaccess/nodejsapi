@@ -1,0 +1,12 @@
+{
+   "_id": "_design/workflow",
+   "language": "javascript",
+   "views": {
+       "sync_users": {
+           "map": "function(doc) {\n  if (doc.type == 'users' && doc.user_type == 'staff' && doc.got_workflow == true) {\n  emit(doc.reference_id, doc.todo_list);\n}\n}"
+       },
+       "get_from_mysql": {
+           "map": "function(doc) {\n  if (doc.type == 'users' && doc.user_type == 'staff' && doc.get_workflow == true) {\n  emit(doc.reference_id, null);\n}\n}"
+       }
+   }
+}

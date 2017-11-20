@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}Remotestaff Service Agreement {% endblock %}</title>
+  {% block head %}{% endblock %}
+</head>
+<body style="padding: 3px;">
+	<table cellpadding="12" style="width: 100%; font-family: Tahoma; font-size: 14px; background: #fff; border: #1ab394 solid 5px;"> 
+		<tbody>
+			<tr> 
+				<td valign="top"> 
+					<img height="68" src="https://remotestaff.com.au/portal/images/remote_staff_logo.png"><br>
+		      		<span style="font-weight:bold;">AUS</span> : 104 / 529 Old South Head Road, Rose Bay, NSW 2029<br>            
+		            <span style="font-weight:bold;">Phone</span> : +61 (02) 8014 9196 press 4<br>
+		            <span style="font-weight:bold;">Fax</span> : 02 8088 7247<br>
+		            <span style="font-weight:bold;">USA Fax</span> : (650) 745 1088<br>
+		            <span style="font-weight:bold;">Email</span> : <a href="mailto:accounts@remotestaff.com.au">accounts@remotestaff.com.au</a>
+				</td> 
+				<td style="text-align:right;">
+		            <img height="68" src="https://remotestaff.com.au/portal/images/think_innovations_logo.png"><br>
+		      		Think Innovations Pty. Ltd. ABN 37 094 364 511<br>
+		            <a href="http://www.remotestaff.com.au">http://www.remotestaff.com.au</a><br>
+		            <a href="http://www.remotestaff.net">http://www.remotestaff.net</a><br>
+		        </td>
+	    	</tr>
+	    	<tr>
+	    		<td colspan="2" valign="top">
+	  				{% block content %}{% endblock %}  			
+	    		</td>
+	    	</tr>
+		</tbody>
+	</table>
+</body>
+</html>

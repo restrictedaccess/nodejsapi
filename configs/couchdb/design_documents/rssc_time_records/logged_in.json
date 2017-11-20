@@ -1,0 +1,8 @@
+{
+   "_id": "_design/logged_in",
+   "views": {
+       "time_summary": {
+           "map": "function (doc) {\nif(doc.type == 'timerecord' && doc.time_out != false) {\nemit([doc.userid, doc.subcontractors_id, 'time', doc.time_in], doc.time_out);\n}\nif(doc.type == 'lunchrecord' && doc.end != false) {\nemit([doc.userid, doc.subcontract_id, 'lunch', doc.start], doc.end);\n}\n}"
+       }
+   }
+}

@@ -1,0 +1,12 @@
+{
+   "_id": "_design/prepaid",
+   "language": "javascript",
+   "views": {
+       "timerecords": {
+           "map": "function(doc) {\n  if (doc.type == 'timerecord') {\n    emit([doc.userid, doc.subcontractors_id, doc.time_in], [doc.time_out, doc.leads_id]);\n  }\n}"
+       },
+       "lunchrecords": {
+           "map": "function(doc) {\n  if (doc.type == 'lunchrecord') {\n    emit([doc.userid, doc.subcontract_id, doc.start], [doc.end, doc.leads_id]);\n  }\n}"
+       }
+   }
+}

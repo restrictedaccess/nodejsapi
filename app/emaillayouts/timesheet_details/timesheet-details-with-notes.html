@@ -1,0 +1,55 @@
+
+{% block content %}
+
+<div style="background-color: #FFF; border: 1px solid #E1E1E8; border-radius: 4px 4px 4px 4px; box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset; margin-bottom: 20px;     min-height: 20px; padding: 19px; font-family:Verdana, Geneva, sans-serif; font-size:14px;">
+
+    <p>
+        Dear Compliance team,
+    </p>
+    <br>
+
+    <p>
+        Here is the list of staffs with adjustment notes from previous week ({{start_date}} – {{end_date}}):
+    </p>
+
+    <br>
+
+    <p>
+        For more details please visit:
+    </p>
+    <p>
+        <a href="http://staging.compliance.remotestaff.com.au/#/compliance/timesheet-notes" target="_blank">http://staging.compliance.remotestaff.com.au/#/compliance/timesheet-notes</a>
+    </p>
+    <br/>
+
+    <table cellspacing="1" cellpadding="5" style="width: 100%; font-family:Verdana, Geneva, sans-serif; font-size:12px; background: #EEE;border: solid 1px #000;">
+        <thead>
+            <tr bgcolor="#f3f3f3">
+                <!--<th style="width: 18%; text-align: center;">Date/Time</th>-->
+                <!--<th style="width: 6%; text-align: center;">Worked Hours</th>-->
+                <th style="text-align: center;">Name of Staff</th>
+                <th style="text-align: center;">Client Name</th>
+                <th style="text-align: center;">SC Assigned</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            {% for item in data %}
+            <tr bgcolor="#FFF">
+                <!--<td style="text-align: center;border: solid 1px #000;">{{ item.month_year }}</td>-->
+                <!--<td style="text-align: center;border: solid 1px #000;">{{ item.working_hrs }}</td>-->
+                <td style="text-align: center;border: solid 1px #000;">{{ item.personal.fname }} {{item.personal.lname}}</td>
+                <td style="text-align: center;border: solid 1px #000;">{{ item.lead.fname }} {{item.lead.lname}}</td>
+                <td style="text-align: center;border: solid 1px #000;">{{ item.lead.admin.admin_fname }} {{item.lead.admin.admin_lname}}</td>
+
+            </tr>
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,327 @@
+FEATURE:
+    System batch syncs paied invoices to xero.com as Payment every 30 seconds
+
+SCENARIO 1:
+    2 Invoices are paid in or system [Happy Path]
+
+    Given:
+        Client 2:
+            Chris Horsley-Wyatt
+            with ID of 14076
+            and email address of chris@blonde-robot.com.au
+            currency is AUD
+            apply_gst is Y
+
+        Client 2:
+            Ben Harold
+            with ID of 14077
+            and email address of chris@blonde-robot.com.au
+            currency is AUD
+            apply_gst is Y
+
+        Subcon 1:
+            Veronica Ann Reyes
+            with subcon ID of 7405
+            job designation is Back-Office Adminstrator
+            current_rate is 36.00
+            client_price is 1154.44
+            hourly rate is 6.66
+
+        Subcon 2:
+            Vanny Cruz
+            with subcon ID of 7406
+            job designation is Back-Office Adminstrator
+            current_rate is 36.00
+            client_price is 1154.44
+            hourly rate is 6.66
+        Timesheet for subcon 1:
+            Week 1 (Jun 01 to Jun 03) is 17
+            Week 2 (Jun 04 to Jun 10) is 40
+            Week 3 (Jun 11 to Jun 17) is 45
+            Week 4 (Jun 18 to Jun 24) is 35
+            Week 5 (Jun 25 to Jun 30) is 40
+            total adjusted hours is 177 (summation of adjusted hours from timesheet from Jun 1 to Jun 30)
+
+        Timesheet for subcon 2:
+            Week 1 (Jun 01 to Jun 03) is 17
+            Week 2 (Jun 04 to Jun 10) is 40
+            Week 3 (Jun 11 to Jun 17) is 45
+            Week 4 (Jun 18 to Jun 24) is 35
+            Week 5 (Jun 25 to Jun 30) is 40
+            total adjusted hours is 177 (summation of adjusted hours from timesheet from Jun 1 to Jun 30)
+
+        Currency Adjustment Regular Invoicing:
+            currency is AUD
+            rate is 37.00
+            effective_date is Jun 2017
+        Invoice Details 1:
+            Not an overpayment (overpayment_from_doc_id does not exist)
+            order_id is 14076-00000006
+            pay_before_date June 09 2017
+            added_on is June 04 2017
+            status is paid
+            sub_total is 1140.3
+            apply_gst is Y
+            gst_amount is 114.03 (10 % of sub_total)
+            total_amount is 1254.33
+            items is a collection of
+            1. item1:
+                staff_name is Veronica Ann Reyes
+                subcontractors_id is 7405
+                description is Veronica Ann Reyes [Back-Office Adminstrator]
+                job_designation is  Back-Office Adminstrator
+                item_id is 1
+                start_date is Jun 01 2017
+                end_date is Jun 30 2017 (last day of the month)
+                unit_price is 6.66
+                qty is 177 (hours worked of subcon)
+                item_type is Regular Rostered Hours
+                amount is 1178.82(unit_price * qty)
+
+            2. item2:
+                staff_name is Veronica Ann Reyes
+                subcontractors_id is 7405
+                description is Currency Adjustment (Contract Rate 1 AUD = 36.00 PESO vs. Current Rate 1 AUD = 37.00 PESO, Currency Difference of -1.00 PESO for your staff Veronica Ann Reyes [Back-Office Adminstrator])
+                job_designation is  Back-Office Adminstrator
+                item_id is 2
+                start_date is Jun 01 2017
+                end_date is Jun 30 2017 (last day of the month)
+                unit_price is −0.18 ((hourly_rate* (current_rate-forex_rate))/forex_rate)
+                qty is 177 (hours worked of subcon)
+                item_type is Currency Adjustment
+                amount is −31.86 (unit_price * qty)
+
+
+        Invoice Details 2:
+            Not an overpayment (overpayment_from_doc_id does not exist)
+            order_id is 14077-00000006
+            pay_before_date June 09 2017
+            added_on is June 04 2017
+            status is paid
+            sub_total is 1140.3
+            apply_gst is Y
+            gst_amount is 114.03 (10 % of sub_total)
+            total_amount is 1254.33
+            items is a collection of
+            1. item1:
+                staff_name is Vanny Cruz
+                subcontractors_id is 7406
+                description is Vanny Cruz [Back-Office Adminstrator]
+                job_designation is  Back-Office Adminstrator
+                item_id is 1
+                start_date is Jun 01 2017
+                end_date is Jun 30 2017 (last day of the month)
+                unit_price is 6.66
+                qty is 177 (hours worked of subcon)
+                item_type is Regular Rostered Hours
+                amount is 1178.82(unit_price * qty)
+
+            2. item2:
+                staff_name is Vanny Cruz
+                subcontractors_id is 7406
+                description is Currency Adjustment (Contract Rate 1 AUD = 36.00 PESO vs. Current Rate 1 AUD = 37.00 PESO, Currency Difference of -1.00 PESO for your staff Vanny Cruz [Back-Office Adminstrator])
+                job_designation is  Back-Office Adminstrator
+                item_id is 2
+                start_date is Jun 01 2017
+                end_date is Jun 30 2017 (last day of the month)
+                unit_price is −0.18 ((hourly_rate* (current_rate-forex_rate))/forex_rate)
+                qty is 177 (hours worked of subcon)
+                item_type is Currency Adjustment
+                amount is −31.86 (unit_price * qty)
+
+    When:
+        The 30 second syncer is triggered via cronjob
+    Then:
+        Xero client will save all invoices as Invoices in a batch with a single call
+        Batch collection will be empty
+
+        Invoice 1 will have
+            InvoiceNumber field to be the 14076-00000006
+            and AmountDue field to be the 1254.33
+            and Status field to be AUTHORISED
+            and DueDate field to be June 09 2017
+            and LineAmountTypes field to be Exclusive
+            and CurrencyCode field to be AUD
+            and SubTotal field to be 1140.3
+            and TotalTax field to be 114.03 (10% of SubTotal field)
+            and Total field to be 1254.33 (SubTotal + TotalTax)
+            and LineItems field to be the items in the invoice with
+                LineItem1:
+                    Description field to be the Veronica Ann Reyes [Back-Office Adminstrator] \n\nDate Coverage: [17 Jun 01 to 17 Jul 30]
+                    UnitAmount field to be 6.66
+                    Quantity field to be  177
+                    TaxType field to be OUTPUT
+                    LineAmount field to be 1168.2 (Quantity * UnitAmount)
+                    TaxAmount field to be 116.82 (10% of LineAmount)
+                    AccountCode field to be RHH
+                LineItem2:
+                    Description field to be the Currency Adjustment (Contract Rate 1 AUD = 36.00 PESO vs. Current Rate 1 AUD = 37.00 PESO, Currency Difference of -1.00 PESO for your staff Veronica Ann Reyes [Back-Office Adminstrator]) \n\nDate Coverage: [17 Jun 01 to 17 Jul 30]
+                    UnitAmount field to be −0.18
+                    Quantity field to be 177
+                    TaxType field to be OUTPUT
+                    LineAmount field to be −31.86 (Quantity * UnitAmount)
+                    TaxAmount field to be −3.19 (10% of LineAmount)
+                    AccountCode field to be CUR LOS
+
+        Invoice 2 will have
+            InvoiceNumber field to be the 14077-00000006
+            and AmountDue field to be the 1254.33
+            and Status field to be AUTHORISED
+            and DueDate field to be June 09 2017
+            and LineAmountTypes field to be Exclusive
+            and CurrencyCode field to be AUD
+            and SubTotal field to be 1140.3
+            and TotalTax field to be 114.03 (10% of SubTotal field)
+            and Total field to be 1254.33 (SubTotal + TotalTax)
+            and LineItems field to be the items in the invoice with
+                LineItem1:
+                    Description field to be the Vanny Cruz [Back-Office Adminstrator] \n\nDate Coverage: [17 Jun 01 to 17 Jul 30]
+                    UnitAmount field to be 6.66
+                    Quantity field to be  177
+                    TaxType field to be OUTPUT
+                    LineAmount field to be 1168.2 (Quantity * UnitAmount)
+                    TaxAmount field to be 116.82 (10% of LineAmount)
+                    AccountCode field to be RHH
+                LineItem2:
+                    Description field to be the Currency Adjustment (Contract Rate 1 AUD = 36.00 PESO vs. Current Rate 1 AUD = 37.00 PESO, Currency Difference of -1.00 PESO for your staff Vanny Cruz [Back-Office Adminstrator]) \n\nDate Coverage: [17 Jun 01 to 17 Jul 30]
+                    UnitAmount field to be −0.18
+                    Quantity field to be 177
+                    TaxType field to be OUTPUT
+                    LineAmount field to be −31.86 (Quantity * UnitAmount)
+                    TaxAmount field to be −3.19 (10% of LineAmount)
+                    AccountCode field to be CUR LOS
+
+
+
+SCENARIO 2:
+    2 Invoices are paid in or system and xero responds with an error [Unappy Path]
+
+    Given:
+        Client 2:
+            Chris Horsley-Wyatt
+            with ID of 14076
+            and email address of chris@blonde-robot.com.au
+            currency is AUD
+            apply_gst is Y
+
+        Client 2:
+            Ben Harold
+            with ID of 14077
+            and email address of chris@blonde-robot.com.au
+            currency is AUD
+            apply_gst is Y
+
+        Subcon 1:
+            Veronica Ann Reyes
+            with subcon ID of 7405
+            job designation is Back-Office Adminstrator
+            current_rate is 36.00
+            client_price is 1154.44
+            hourly rate is 6.66
+
+        Subcon 2:
+            Vanny Cruz
+            with subcon ID of 7406
+            job designation is Back-Office Adminstrator
+            current_rate is 36.00
+            client_price is 1154.44
+            hourly rate is 6.66
+        Timesheet for subcon 1:
+            Week 1 (Jun 01 to Jun 03) is 17
+            Week 2 (Jun 04 to Jun 10) is 40
+            Week 3 (Jun 11 to Jun 17) is 45
+            Week 4 (Jun 18 to Jun 24) is 35
+            Week 5 (Jun 25 to Jun 30) is 40
+            total adjusted hours is 177 (summation of adjusted hours from timesheet from Jun 1 to Jun 30)
+
+        Timesheet for subcon 2:
+            Week 1 (Jun 01 to Jun 03) is 17
+            Week 2 (Jun 04 to Jun 10) is 40
+            Week 3 (Jun 11 to Jun 17) is 45
+            Week 4 (Jun 18 to Jun 24) is 35
+            Week 5 (Jun 25 to Jun 30) is 40
+            total adjusted hours is 177 (summation of adjusted hours from timesheet from Jun 1 to Jun 30)
+
+        Currency Adjustment Regular Invoicing:
+            currency is AUD
+            rate is 37.00
+            effective_date is Jun 2017
+        Invoice Details 1:
+            Not an overpayment (overpayment_from_doc_id does not exist)
+            order_id is 14076-00000006
+            pay_before_date June 09 2017
+            added_on is June 04 2017
+            status is paid
+            sub_total is 1140.3
+            apply_gst is Y
+            gst_amount is 114.03 (10 % of sub_total)
+            total_amount is 1254.33
+            items is a collection of
+            1. item1:
+                staff_name is Veronica Ann Reyes
+                subcontractors_id is 7405
+                description is Veronica Ann Reyes [Back-Office Adminstrator]
+                job_designation is  Back-Office Adminstrator
+                item_id is 1
+                start_date is Jun 01 2017
+                end_date is Jun 30 2017 (last day of the month)
+                unit_price is 6.66
+                qty is 177 (hours worked of subcon)
+                item_type is Regular Rostered Hours
+                amount is 1178.82(unit_price * qty)
+
+            2. item2:
+                staff_name is Veronica Ann Reyes
+                subcontractors_id is 7405
+                description is Currency Adjustment (Contract Rate 1 AUD = 36.00 PESO vs. Current Rate 1 AUD = 37.00 PESO, Currency Difference of -1.00 PESO for your staff Veronica Ann Reyes [Back-Office Adminstrator])
+                job_designation is  Back-Office Adminstrator
+                item_id is 2
+                start_date is Jun 01 2017
+                end_date is Jun 30 2017 (last day of the month)
+                unit_price is −0.18 ((hourly_rate* (current_rate-forex_rate))/forex_rate)
+                qty is 177 (hours worked of subcon)
+                item_type is Currency Adjustment
+                amount is −31.86 (unit_price * qty)
+
+
+        Invoice Details 2:
+            Not an overpayment (overpayment_from_doc_id does not exist)
+            order_id is 14077-00000006
+            pay_before_date June 09 2017
+            added_on is June 04 2017
+            status is paid
+            sub_total is 1140.3
+            apply_gst is Y
+            gst_amount is 114.03 (10 % of sub_total)
+            total_amount is 1254.33
+            items is a collection of
+            1. item1:
+                staff_name is Vanny Cruz
+                subcontractors_id is 7406
+                description is Vanny Cruz [Back-Office Adminstrator]
+                job_designation is  Back-Office Adminstrator
+                item_id is 1
+                start_date is Jun 01 2017
+                end_date is Jun 30 2017 (last day of the month)
+                unit_price is 6.66
+                qty is 177 (hours worked of subcon)
+                item_type is Regular Rostered Hours
+                amount is 1178.82(unit_price * qty)
+
+            2. item2:
+                staff_name is Vanny Cruz
+                subcontractors_id is 7406
+                description is Currency Adjustment (Contract Rate 1 AUD = 36.00 PESO vs. Current Rate 1 AUD = 37.00 PESO, Currency Difference of -1.00 PESO for your staff Vanny Cruz [Back-Office Adminstrator])
+                job_designation is  Back-Office Adminstrator
+                item_id is 2
+                start_date is Jun 01 2017
+                end_date is Jun 30 2017 (last day of the month)
+                unit_price is −0.18 ((hourly_rate* (current_rate-forex_rate))/forex_rate)
+                qty is 177 (hours worked of subcon)
+                item_type is Currency Adjustment
+                amount is −31.86 (unit_price * qty)
+
+    WHEN:
+        Xero Client responds with a 503 error code
+    THEN:
+        A history of the error will be recorded

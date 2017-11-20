@@ -1,0 +1,62 @@
+FEATURE: Create API for fetching of Invoice status {
+    SCENARIO1: A Client access the top up page (HAPPY PATH) {
+        GIVEN {
+            Client {
+                Chris Horsley-Wyatt
+                with ID of 14076
+                and email address of chris@blonde-robot.com.au
+                currency is AUD
+                apply_gst is Y
+            };
+
+            Invoice {
+                order_id of 14076-00000021
+                status: "new"
+
+            }
+        }
+
+        WHEN {
+            The client clicks on one of the payment buttons
+        }
+
+        THEN {
+            The API will respond with
+            success field to be true;
+            result field to be an object with
+                status field to be "new";
+                order_id field to be 14076-00000021
+        }
+    }
+
+     SCENARIO2: A Client access the top up page (UNHAPPY PATH) {
+            GIVEN {
+                Client {
+                    Chris Horsley-Wyatt
+                    with ID of 14076
+                    and email address of chris@blonde-robot.com.au
+                    currency is AUD
+                    apply_gst is Y
+                };
+
+                Invoice {
+                    order_id of 14076-00000022
+
+                }
+            }
+
+            WHEN {
+                The api is called with an invoice that does not exists
+            }
+
+            THEN {
+                The API will respond with
+                success field to be false;
+                error field to be an array with
+                    first element to be "Invoice does not exist"
+            }
+        }
+}
+
+
+

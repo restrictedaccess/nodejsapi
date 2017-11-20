@@ -1,0 +1,9 @@
+{
+   "_id": "_design/prepaid_monitoring",
+   "language": "javascript",
+   "views": {
+       "working_staff": {
+           "map": "function(doc) {\n  if (doc.type == 'users' && doc.user_type == 'staff' && doc.working_details.prepaid == 'yes') {\n    if (doc.status in {'quick break':'', 'lunch break': '','working':''}) {\n      emit(doc.leads_id, doc.status);\n    }\n  }\n}"
+       }
+   }
+}

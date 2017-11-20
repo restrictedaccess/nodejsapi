@@ -1,0 +1,416 @@
+Invoice Versioning Test Cases and API Endpoints
+
+API Endpoint Url: /invoice/sync-version/
+Request Parameters: json data from create invoice
+Request Method: POST
+Collection: invoice_versions
+Result:  {success:true, result: "Client docs inserted"}
+
+Test Scenario:
+
+Insert record
+Given:
+{
+	"added_on": "2017-06-21T01:14:06.960Z",
+	"added_on_unix": 1498007646,
+	"disable_auto_follow_up": "N",
+	"apply_gst": "Y",
+	"order_id": "12607-00000019",
+	"client_email": "devs.anne.tester.devs@remotestaff.com.au",
+	"client_fname": "Anne",
+	"client_lname": "Devs Dummy",
+	"type": "order",
+	"payment_advise": false,
+	"mongo_synced": true,
+	"client_id": 12607,
+	"pay_before_date": "2017-06-21T01:15:00.000Z",
+	"pay_before_date_unix": 1498007700,
+	"sub_total": 48,
+	"gst_amount": 4.800000000000001,
+	"total_amount": 52.8,
+	"currency": "AUD",
+	"added_by": "Joy Edora :380",
+	"invoice_setup": "margin",
+	"items": [{
+		"item_id": 1,
+		"description": "Test 1",
+		"amount": 2,
+		"unit_price": 2,
+		"qty": 1,
+		"subcontractors_id": false,
+		"item_type": "Currency Adjustment",
+		"commission_id": null
+	}, {
+		"item_id": 2,
+		"description": "Test 2",
+		"amount": 34,
+		"unit_price": 34,
+		"qty": 1,
+		"subcontractors_id": false,
+		"item_type": "Reimbursement",
+		"commission_id": null
+	}, {
+		"item_id": 3,
+		"description": "Test 3",
+		"amount": 4,
+		"unit_price": 4,
+		"qty": 1,
+		"subcontractors_id": false,
+		"item_type": "Final Invoice",
+		"commission_id": null
+	}, {
+		"item_id": 4,
+		"description": "Test 4",
+		"amount": 5,
+		"unit_price": 5,
+		"qty": 1,
+		"subcontractors_id": false,
+		"item_type": "Office Fee",
+		"commission_id": null
+	}, {
+		"item_id": 5,
+		"description": "Test 5",
+		"amount": 3,
+		"unit_price": 3,
+		"qty": 1,
+		"subcontractors_id": false,
+		"item_type": "Service Fee",
+		"commission_id": null
+	}],
+	"status": "new",
+	"client_names": ["anne", "devs dummy"],
+	"history": [{
+		"timestamp": "2017-06-21T01:15:22.354Z",
+		"changes": "Changed due date from 2017-06-21T09:15:22+08:00 to 2017-06-21T09:15:00+08:00",
+		"by": "Joy Edora :380",
+		"timestamp_unix": 1498007722
+	}, {
+		"timestamp": "2017-06-21T01:15:22.355Z",
+		"changes": "Changed due date from 2017-06-21T09:15:22+08:00 to 2017-06-21T09:14:06+08:00",
+		"by": "Joy Edora :380",
+		"timestamp_unix": 1498007722
+	}]
+},
+
+When
+	Admin create an Invoice or triggered manually via syncer
+
+
+Then
+Get invoice number latest version by invoking /invoice/get-latest-version/ .
+If latest version is available:
+		{
+	   "order_id": "12607-00000019",
+	   "version" : 2
+}
+
+ Get the version number then append new field version in the given data with the incremented value from latest version value:
+		{
+	"added_on": "2017-06-21T01:14:06.960Z",
+	"version": 3,
+	"added_on_unix": 1498007646,
+	"disable_auto_follow_up": "N",
+	"apply_gst": "Y",
+	"order_id": "12607-00000019",
+	"client_email": "devs.anne.tester.devs@remotestaff.com.au",
+	"client_fname": "Anne",
+	"client_lname": "Devs Dummy",
+	"type": "order",
+	"payment_advise": false,
+	"mongo_synced": true,
+	"client_id": 12607,
+	"pay_before_date": "2017-06-21T01:15:00.000Z",
+	"pay_before_date_unix": 1498007700,
+	"sub_total": 48,
+	"gst_amount": 4.800000000000001,
+	"total_amount": 52.8,
+	"currency": "AUD",
+	"added_by": "Joy Edora :380",
+	"invoice_setup": "margin",
+	"items": [{
+		"item_id": 1,
+		"description": "Test 1",
+		"amount": 2,
+		"unit_price": 2,
+		"qty": 1,
+		"subcontractors_id": false,
+		"item_type": "Currency Adjustment",
+		"commission_id": null
+	}, {
+		"item_id": 2,
+		"description": "Test 2",
+		"amount": 34,
+		"unit_price": 34,
+		"qty": 1,
+		"subcontractors_id": false,
+		"item_type": "Reimbursement",
+		"commission_id": null
+	}, {
+		"item_id": 3,
+		"description": "Test 3",
+		"amount": 4,
+		"unit_price": 4,
+		"qty": 1,
+		"subcontractors_id": false,
+		"item_type": "Final Invoice",
+		"commission_id": null
+	}, {
+		"item_id": 4,
+		"description": "Test 4",
+		"amount": 5,
+		"unit_price": 5,
+		"qty": 1,
+		"subcontractors_id": false,
+		"item_type": "Office Fee",
+		"commission_id": null
+	}, {
+		"item_id": 5,
+		"description": "Test 5",
+		"amount": 3,
+		"unit_price": 3,
+		"qty": 1,
+		"subcontractors_id": false,
+		"item_type": "Service Fee",
+		"commission_id": null
+	}],
+	"status": "new",
+	"client_names": ["anne", "devs dummy"],
+	"history": [{
+		"timestamp": "2017-06-21T01:15:22.354Z",
+		"changes": "Changed due date from 2017-06-21T09:15:22+08:00 to 2017-06-21T09:15:00+08:00",
+		"by": "Joy Edora :380",
+		"timestamp_unix": 1498007722
+	}, {
+		"timestamp": "2017-06-21T01:15:22.355Z",
+		"changes": "Changed due date from 2017-06-21T09:15:22+08:00 to 2017-06-21T09:14:06+08:00",
+		"by": "Joy Edora :380",
+		"timestamp_unix": 1498007722
+	}]
+}
+
+
+
+If there’s no record available from /invoice/get-latest-version/ . Then just append the field version with the value of 1 in the given data as this is the first version of the record:
+
+		{
+	"added_on": "2017-06-21T01:14:06.960Z",
+	"version": 1,
+	"added_on_unix": 1498007646,
+	"disable_auto_follow_up": "N",
+	"apply_gst": "Y",
+	"order_id": "12607-00000019",
+	"client_email": "devs.anne.tester.devs@remotestaff.com.au",
+	"client_fname": "Anne",
+	"client_lname": "Devs Dummy",
+	"type": "order",
+	"payment_advise": false,
+	"mongo_synced": true,
+	"client_id": 12607,
+	"pay_before_date": "2017-06-21T01:15:00.000Z",
+	"pay_before_date_unix": 1498007700,
+	"sub_total": 48,
+	"gst_amount": 4.800000000000001,
+	"total_amount": 52.8,
+	"currency": "AUD",
+	"added_by": "Joy Edora :380",
+	"invoice_setup": "margin",
+	"items": [{
+		"item_id": 1,
+		"description": "Test 1",
+		"amount": 2,
+		"unit_price": 2,
+		"qty": 1,
+		"subcontractors_id": false,
+		"item_type": "Currency Adjustment",
+		"commission_id": null
+	}, {
+		"item_id": 2,
+		"description": "Test 2",
+		"amount": 34,
+		"unit_price": 34,
+		"qty": 1,
+		"subcontractors_id": false,
+		"item_type": "Reimbursement",
+		"commission_id": null
+	}, {
+		"item_id": 3,
+		"description": "Test 3",
+		"amount": 4,
+		"unit_price": 4,
+		"qty": 1,
+		"subcontractors_id": false,
+		"item_type": "Final Invoice",
+		"commission_id": null
+	}, {
+		"item_id": 4,
+		"description": "Test 4",
+		"amount": 5,
+		"unit_price": 5,
+		"qty": 1,
+		"subcontractors_id": false,
+		"item_type": "Office Fee",
+		"commission_id": null
+	}, {
+		"item_id": 5,
+		"description": "Test 5",
+		"amount": 3,
+		"unit_price": 3,
+		"qty": 1,
+		"subcontractors_id": false,
+		"item_type": "Service Fee",
+		"commission_id": null
+	}],
+	"status": "new",
+	"client_names": ["anne", "devs dummy"],
+	"history": [{
+		"timestamp": "2017-06-21T01:15:22.354Z",
+		"changes": "Changed due date from 2017-06-21T09:15:22+08:00 to 2017-06-21T09:15:00+08:00",
+		"by": "Joy Edora :380",
+		"timestamp_unix": 1498007722
+	}, {
+		"timestamp": "2017-06-21T01:15:22.355Z",
+		"changes": "Changed due date from 2017-06-21T09:15:22+08:00 to 2017-06-21T09:14:06+08:00",
+		"by": "Joy Edora :380",
+		"timestamp_unix": 1498007722
+	}]
+}
+
+
+		5. Insert record to collection then return:
+		{success:true, result: "Client docs inserted"}
+
+
+
+
+API Endpoint Url: /invoice/get-latest-version/
+Request Parameters: invoice_number
+Request Method: GET
+Collection: invoice_versions
+Result:  {success:true, result: data}
+
+Test Scenario
+
+Get latest version
+Given
+      {"invoice_numner" : "12607-00000019"}
+When
+	Triggered manually via syncer or invoked
+Then
+            Fetch one data order by version_number descending where invoice_number equals to given  12607-00000019:
+Result:
+ 	{
+	   "order_id": "12607-00000019",
+	   "version" : 3
+}
+
+
+API Endpoint Url: /invoice/has-modification/
+Request Parameters: {"invoice_number" : "12607-00000019"}
+Request Method: GET
+Collection: invoice_modifications
+Result:  {success:true, result: true}, {success:true, result: false}
+
+Test Scenario
+
+Check if invoice number has modification
+Given
+	{"invoice_number" : "12607-00000019"}
+
+ When
+	Triggered manually via syncer or invoked
+Then
+	Fetch one record by invoice number and status is pending. If the result has one or more record then return true, otherwise, return false
+
+
+
+
+API Endpoint Url: /invoice/sync-modification/
+Request Parameters: {"invoice_number" : "12607-00000019"}
+Request Method: POST
+Collection: invoice_modifications
+Result:  {success:true, result: “Invoice Number Added”}
+
+Test Scenario
+
+Sync invoice modification
+Given
+	{
+  	"invoice_number" : "12607-00000019",
+"admin_id" : 380,
+	"added_by": "Joy Edora",
+	"date_updated": "2017-06-21",
+	"status": "pending",
+}
+When
+	Triggered manually via syncer or invoked
+Then
+	Insert record in the collection and then return:
+	{success:true, result: “Invoice Number Added”}
+
+
+
+API Endpoint Url: /invoice/clear-modification/
+Request Parameters: {"invoice_number" : "12607-00000019"}
+Request Method: POST
+Collection: invoice_modifications
+Result:  {success:true, result: “Invoice Number Status Cleared”}
+
+Test Scenario
+
+Clear invoice status on invoice_modifications
+Given
+	{"invoice_number" : "12607-00000019"}
+When
+	Triggered manually via syncer or invoked
+	When admin click send invoice in the Invoice Management
+
+
+
+Then
+	Query to invoice_modifications to set records of all invoice number 12607-00000019 to status equals done. Then return:
+{success:true, result: “Invoice Number Status Cleared”}
+
+
+
+Integration Tests
+
+Sample Given Data:
+
+Invoice Number: 12607-00000019
+Invoice Items:
+
+Item ID: 1, Description: Test 1, Amount: 4, Unit Price: 4, Qty: 2
+Item ID: 2, Description: Test 2, Amount: 3, Unit Price: 3, Qty: 5
+
+
+Step 1: System Create Invoice
+
+The system will insert record to client_docs collection
+Invoke /invoice/get-latest-version/ to check existing version
+If there’s existing record, get the version number
+If there’s an existing version, let’s say version 1 then:
+Invoke /invoice/sync-version/ API
+After insertion, record inserted should save the version number like so: 12607-00000019-2
+If there’s no existing version,
+Invoke /invoice/sync-version/ API
+After insertion, record inserted should save the version number like so: 12607-00000019-1 this is the first version
+
+
+Step 2: Admin updates the invoice
+
+Removed one Invoice Item (Let’s say Item ID: 2) then clicked save
+Invoke /invoice/sync-modification/ API
+After sync modification api save the data,
+Query count and assert sync modification data for that invoice number which should return value of 1.
+The System Admin updates the Invoice again and added new invoice item then clicked save.
+Invoke /invoice/sync-modification/ API
+Query count and assert sync modification data for that invoice number which should return value of 2.
+
+Step 3: Admin send invoice
+
+Invoke /invoice/get-latest-version/ to check existing version.
+Get the version from the API response, let’s say version = 2.
+Invoke /invoice/sync-modification/ to save data with the invoice version equals to 2.: 12607-00000019-2
+Get the saved data and assert if invoice number 12607-00000019-2
+Invoke /invoice/clear-modification/ to set all invoice modification of that invoice number to status = done.
+Query count to invoice_modifications and assert if count is equals to 0

@@ -1,0 +1,108 @@
+<div style="border: #f3f3f3 solid 1px; padding: 5px;">
+	
+
+<div style="font-family: Tahoma; font-size: 12px; text-align: center;">
+	<img style="height: 100px;" src="https://remotestaff.com.au/portal/images/remote_staff_logo.png">
+	<br>
+	104 / 529 Old South Head Road, Rose Bay, NSW Australia 2029 <br>
+	<strong>Phone</strong> : +61 (02) 8014 9196 press 4 <strong>Fax</strong> : 02 8088 7247 <strong>USA</strong> : (650) 745 1088<br>
+	<strong>Email</strong> : accounts@remotestaff.com.au
+</div>
+<br><br>
+<div style="font-family: Tahoma; font-size: 14px; text-align: center; font-weight: bold;">
+	Tax Invoice {{ doc.order_id }}
+</div>
+
+<br><br>
+<table cellspacing="5" cellpadding="0" width="100%">
+	<tr>
+		<td valign="top" width="50%">
+			<div style="border: #EEE solid 1px; font-family: Tahoma;  height: 110px; ">
+				<div style="background: #f3f3f3; padding: 5px; font-size: 13px; font-weight: bold;">Billing Info</div>
+				<div style="padding: 5px; font-size: 12px;" >
+					<strong>Name</strong>  : {{ doc.client_fname }} {{ doc.client_lname}}<br>
+					{% if doc.client_basic_info.days_before_suspension %}
+					<strong>Company</strong>  : {{ doc.client_basic_info.company_name }}<br>
+					{% endif %}
+					<strong>Address</strong>  : {{ doc.client_basic_info.company_address }}<br><br> 
+				</div>
+			</div>
+		</td>
+		<td valign="top" width="50%">
+			<div style="border: #EEE solid 1px; text-align: right; font-family: Tahoma;  height: 110px;">
+				<div style="background: #f3f3f3; padding: 5px; font-size: 13px; font-weight: bold;">Amount to be Paid</div>
+				<div style="padding: 5px; font-size: 12px;" >
+					<div style="font-size: 12px; font-weight: bold;">
+						({{ doc.currency }}) {% if doc.currency == 'GBP' %}&#163;{% else %}${% endif %}{{ doc.total_amount_string }}
+					</div>
+					{{doc.status}} : <strong>Tax Invoice Status</strong> 
+					<br>
+					{{ doc.added_on | date('jS \o\f F Y') }} : <strong>Tax Invoice Date</strong>
+					<br>
+					{{ doc.pay_before_date_ordinal_string }} : <strong>Payment Due Date</strong>
+				</div>				
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="2" valign="top">
+			<br>
+			<br>
+			<div style="font-family:Tahoma; font-size: 13px; font-weight: bold;" >Invoice Summary</div>
+			<br>
+			<table cellspacing="1" cellpadding="5" style="width: 100%; font-family: Tahoma ; font-size: 12px; background: #EEE;">
+					<thead>
+						<tr bgcolor="#f3f3f3">
+							<th style="width: 6%;">Item No.</th>
+							<th style="width: 7%;">Item Type</th>
+							<th style="">Description</th>            				
+							<th style="width: 17%; text-align: center;">Date</th>           				
+							<th style="text-align: right;">Quantity</th>
+							<th style="width: 9%; text-align: right;">Unit Price</th>
+							<th style="width: 9%; text-align: right;">Amount</th>
+						</tr>
+					</thead>
+					<tbody>
+						  			
+				  		{% for item in doc.items %}  			
+				  			<tr bgcolor="#FFF">
+				  				<td >{{ item.item_id }}</td>
+				  				<td >{{ item.item_type }}</td>
+				  				<td >{{ item.description }}</td>
+				  				<td style="text-align:center;" >{{ item.start_date }} - {{ item.end_date }}</td>
+				  				<td style="text-align: right">{{ item.qty }}</td>
+				  				<td style="text-align: right">
+				  					{% if doc.currency == 'GBP' %}&#163;{% else %}${% endif %}{{ item.unit_price }}
+				  				</td>
+				  			    <td style="text-align: right">
+									{% if doc.currency == 'GBP' %}&#163;{% else %}${% endif %}{{ item.amount }}
+								</td>
+				  			</tr>  			
+						{% endfor %} 			
+						
+					</tbody>
+					<tfoot>
+						<tr bgcolor="#FFF" >
+							<td colspan="5" align="right">&nbsp;</td>
+							<td align="right" style="background:yellow;">Sub Total</td>
+							<td align="right"style="background:yellow;">{% if doc.currency == 'GBP' %}&#163;{% else %}${% endif %}{{ doc.sub_total_string }}</td>
+						</tr>
+						
+						<tr bgcolor="#FFF" >
+							<td colspan="5" align="right">&nbsp;</td>
+							<td align="right" style="background:yellow;">GST</td>
+							<td align="right" style="background:yellow;">{% if doc.currency == 'GBP' %}&#163;{% else %}${% endif %}{{ doc.gst_amount_string }}</td>
+						</tr>
+						
+						<tr bgcolor="#FFF" >
+							<td colspan="5" align="right">&nbsp;</td>
+							<td align="right" style="background:yellow;"><strong>Amount</strong></td>
+							<td align="right" style="background:yellow;"><strong>{% if doc.currency == 'GBP' %}&#163;{% else %}${% endif %}{{ doc.total_amount_string }}</strong></td>
+						</tr>
+					</tfoot>
+				</table>
+		</td>
+	</tr>
+</table>
+
+</div>

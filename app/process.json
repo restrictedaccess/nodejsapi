@@ -1,0 +1,19 @@
+{
+  "apps" : [{
+    "script"      : "worker.js",
+    "watch"       : true,
+    "env": {
+      "NODE_ENV": "development",
+       "TZ":"Asia/Manila"
+    },
+    "env_production" : {
+       "NODE_ENV": "production",
+       "TZ":"Asia/Manila"
+    }
+  },{
+    "name"       : "RemoteStaff API",
+    "script"     : "app.js",
+    "instances"  : 4,
+    "exec_mode"  : "cluster"
+  }]
+}

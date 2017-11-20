@@ -1,0 +1,42 @@
+{
+   "_id": "_design/orders",
+   "language": "javascript",
+   "views": {
+       "paypal_transactions": {
+           "map": "function(doc) {\n  if (doc.type == 'paypal_transaction'){\n  emit(doc.order_id, doc);\n}\n}"
+       },
+       "paypal_transactions_set_express_checkout": {
+           "map": "function(doc) {\n  if (doc.type == 'paypal_transaction' && doc.method == 'SetExpressCheckout'){\n  emit(doc.order_id, doc);\n}\n}"
+       },
+       "secure_pay_transaction": {
+           "map": "function(doc) {\n  if (doc.type == 'secure_pay_transaction') {\n  emit(doc.order_id, doc);\n  }\n}"
+       },
+       "card_details": {
+           "map": "function(doc) {\n  if (doc.type == 'card_details') {\n  emit(doc.order_id, doc);\n  }\n}"
+       },
+       "get_order_id": {
+           "map": "function(doc) {\n  if (doc.type == 'order') {\n  emit(doc.order_id, null);\n}\n}"
+       },
+       "all_orders_except_cancelled": {
+           "map": "function(doc) {\n  if (doc.type == 'order' && doc.status != 'cancelled') {\n    var description = '';\n    for (item in doc.items) {\n      description += doc.items[item]['description'] + ' ';\n    }\n    emit([doc.client_id, doc.order_id], \n      {'status':doc.status, \n       'total_amount': doc.total_amount,\n       'order_date': doc.added_on,\n       'description': description,\n       'currency': doc.currency\n      });\n  }\n}"
+       },
+       "all_orders": {
+           "map": "function(doc) {\n  if (doc.type == 'order') {\n    var description = '';\n    for (item in doc.items) {\n      description += doc.items[item]['description'] + ' ';\n    }\n    emit([doc.client_id, doc.order_id], \n      {'status':doc.status, \n       'total_amount': doc.total_amount,\n       'order_date': doc.added_on,\n       'description': description,\n       'currency': doc.currency\n      });\n  }\n}\n"
+       },
+       "paid_orders_by_date": {
+           "map": "function(doc) {\n  if (doc.type == 'order' && doc.status == 'paid') {\n    emit(doc.added_on, {'order_id':doc.order_id, 'client_id':doc.client_id, 'payment_mode':doc.payment_mode, 'total_amount':doc.total_amount, 'currency':doc.currency});\n  }\n}"
+       },
+       "by_date": {
+           "map": "function(doc) {\n  if (doc.type == 'order') {\n    emit(doc.added_on, \n      {'status': doc.status, 'order_id':doc.order_id, 'client_id':doc.client_id, 'payment_mode':doc.payment_mode, 'total_amount':doc.total_amount, 'currency':doc.currency});\n  }\n}\n"
+       },
+       "paypal_transactions_by_timestamp": {
+           "map": "function(doc) {\n  if (doc.type == 'paypal_transaction'){\n  emit(doc.request_timestamp, doc.order_id);\n}\n}"
+       },
+       "all_orders_except_cancelled_gst": {
+           "map": "function(doc) {\n  if (doc.type == 'order' && doc.status != 'cancelled') {\n    var description = '';\n    for (item in doc.items) {\n      description += doc.items[item]['description'] + ' ';\n    }\n    emit([doc.currency, doc.apply_gst, doc.added_on], \n      {'status':doc.status, \n       'total_amount': doc.total_amount,\n       'order_date': doc.added_on,\n       'description': description,\n       'currency': doc.currency,\n       'client_name' : doc.client_fname+' '+doc.client_lname,\n       'client_id' : doc.client_id,\n       'apply_gst' : doc.apply_gst,\n       'order_id' : doc.order_id,\n       'pay_before_date' : doc.pay_before_date\n      });\n  }\n}"
+       }
+   },
+   "filters": {
+       "orders": "function(doc, req){\n if (doc.type=='order' && doc.status != 'cancelled') {\n return true; \n}else{\n return false; \n} \n}"
+   }
+}

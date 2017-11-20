@@ -1,0 +1,48 @@
+{% extends 'template.html' %}
+
+{% block content %}
+
+	Dear {{ doc.client_basic_info.fname|title }} {{ doc.client_basic_info.lname|title }},<br><br>
+	
+    <h2>Thanks for your payment.</h2>
+    
+    <br>
+    We have received the amount of {{ doc.currency }} {% if doc.currency =='GBP' %}&pound;{% else %}${% endif %}{{ doc.total_amount_string }} {% if doc.payment_mode %} via {{ doc.payment_mode }} {% endif %} for invoice #{{ doc.order_id }}.
+    
+    <!-- Monthly invoiced clients -->
+    {% if doc.days_before_suspension == -30 %}
+
+        <br><br>
+        Your account has been updated now.
+        <br><br>
+        Your next monthly invoice will be issued to you no later than the 5th of the next month.
+        <br><br>
+
+    {% else %}
+    <!-- Prepaid invoiced clients -->
+        <br><br>
+        Your Available Balance is now : <strong style="background-color:#ffff99;">{{ doc.currency }}  {% if doc.currency =='GBP' %}&pound;{% else %}${% endif %}{{ doc.running_balance }}</strong> 
+        <br><br>
+        This available balance can be used up by any of your <strong>ACTIVE</strong> remote staff members. Your next invoice will be issued to you 5 days before you run out of credit.
+        <br><br>
+
+    {% endif %}
+
+
+  
+
+
+
+    Your Payment Acknowledgement tax receipt has been attached to this email.
+    <br><br>
+    Should you have any questions, please don't hesitate to contact us.
+    <br>
+    accounts@remotestaff.com.au
+    <br>
+    AUS +61 (02) 8073 4142 press 4 over the phone
+    <br>
+    USA +1 617 945 8437
+    <br>
+    <br>
+	<div style="color: #EEE">Doc ID {{  doc.couch_id }}</div> 
+{% endblock %}

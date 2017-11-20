@@ -1,0 +1,251 @@
+{% if degree == 1 %}
+	<strong>Payment Request</strong>
+	<br>
+	<br>
+	
+	Hi {{ doc.client_fname|title }} {{ doc.client_lname|title }},
+	
+	<br>
+	<br>
+
+	Good day.<br><br>
+	
+	Hope this email finds you all well.<br><br>
+	
+	Please could we bring your attention to <strong>Tax Invoice Number {{ doc.order_id }}</strong>
+	sent to you on the {{ doc.added_on_str }} which is now overdue.
+	
+	<br><br>
+	
+	We would appreciate your urgent attention on raising the next payment for us as the balance on your
+	account is at ({{ doc.currency }} {% if doc.currency == 'GBP' %}&#163;{% else %}${% endif %}{{ doc.running_balance_str }} ) and we have been manually activating your account for the last few days 
+	so your staff could work.
+	
+	<br><br>
+	
+	On ____________________  will be the last day that we will manually activate your account 
+	and when your staff logs out, your account will be automatically on temporary hold due to negative balance 
+	as Invoice above has not been paid yet.
+	
+	<br><br>
+	
+	If already paid, please disregard this email and send us the details of your payment to accounts@remotestaff.com.au so we can update your account.
+	
+	<br><br>
+	
+	We will be happy to help should you have any queries.
+	
+	<br><br>
+	
+	Thank you for your time on this matter.
+	
+	<br><br>
+	
+	Regards,
+	<br>
+	Accounts
+	
+	
+{% endif %}
+
+
+
+{% if degree == 2 %}
+
+
+	<strong>Urgent Payment Request</strong>
+	<br>
+	<br>
+	
+	Hi {{ doc.client_fname|title }} {{ doc.client_lname|title }},
+	
+	<br>
+	<br>
+
+	Good day.<br><br>
+	
+	
+	We have just checked our bank account today and still haven't seen any payment yet coming from
+	your account against your <strong>Tax Invoice Number {{ doc.order_id }}</strong> which is now very much overdue.
+	
+	<br><br>
+	
+	We tried calling you on this numbers _____(Contact Numbers)______
+	But can't get a hold of you and Invoice reminders has been sent to you the _________(date invoice reminders were sent)_______.
+	
+	<br><br>
+	
+	Can you please let me know if you have any concerns or if you feel there is something preventing you
+	from making this payment, so we know what to do on our end?
+		
+	<br><br>
+	
+	Please be informed that your staff/s is on temporary hold from working with you due to the unpaid Invoice.
+	
+	<br><br>
+	
+	I have attached here your outstanding Invoice for your reference.
+
+ 	<br><br>
+
+	Hope to hear an update from you this time and please attend this matter with importance, send us
+	your payment advice when payment has been made so we can update your account.
+
+ 	<br><br>
+
+	Should you have questions, please let us know.
+
+ 	<br><br>
+
+ 
+	Thank you.
+	<br><br>
+
+ 
+	Regards,<br>
+	Accounts
+	
+{% endif %}
+
+
+{% if degree == 3 %}
+
+	<strong>Payment Required</strong>
+	<br>
+	<br>
+	
+	
+ 	<strong>Remote Staff Inc.</strong>  
+	
+	<br>
+	<br>
+	
+	<strong>E-mail: accounts@remotestaff.com.au</strong>	
+	
+	<br>
+	<br>
+	{{ doc.today | date('jS \o\f F Y') }}
+	
+	<br>
+	<br>
+	<strong>To: {{ doc.client_fname|title }} {{ doc.client_lname|title }}</strong> 
+	
+	<br>
+	<br>
+	
+	As you know we have been actively chasing payment from you, I had been making phone
+	calls and emails, asking for overdue amount to be remitted, To date I have not received any
+	response, last advise was on the _______________________ saying payment will be made on that same
+	week (previous conversation with Client should there be one).
+	
+	<br>
+	<br>
+	
+	We ask that you contact us immediately regarding this matter or advise us as to when this
+	amount will be settled because we don't want to put pressure on your
+	with your staff/s because of outstanding payroll payment of invoices.
+	
+	
+	<br>
+	<br>
+	
+	<strong>We don't mean to be difficult but we will not be able to continue to allow your staff to
+	work for you until we hear an update from you and these are all settled</strong>.<br>
+	I hope you would also understand the importance of paying your monthly invoice on time, as this would serve
+	as security to your staff’s monthly pay.
+	
+	<br>
+	<br>
+	
+	Our preference is to get the account paid up to date in order to avoid any further action.
+
+	<br>
+	<br>
+	<strong>Please contact us immediately on or before ___________________</strong> 
+
+	<br>
+	<br>
+	Thank you.
+
+	<br>
+	<br>
+	Regards,<br>
+	Accounts
+	
+	
+	
+{% endif %}
+
+
+
+{% if degree == 4 %}
+	
+	<strong>Cancellation Letter</strong>
+	<br>
+	<br>
+	
+	
+ 	<strong>Remote Staff Inc.</strong>  
+	
+	<br>
+	<br>
+	
+	<strong>E-mail: accounts@remotestaff.com.au</strong>	
+	
+	<br>
+	<br>
+	{{ doc.today | date('jS \o\f F Y') }}
+	
+	<br>
+	<br>
+	<strong>To: {{ doc.client_fname|title }} {{ doc.client_lname|title }}</strong> 
+	
+	<br>
+	<br>
+	
+	
+	As you know we have been actively chasing payment from you; however your account
+	remains outstanding which is not sustainable on our business terms.
+	
+	<br>
+	<br>
+	To date we have not received any response.
+
+	<br>
+	<br>
+	Your contract with Remote Staff Inc. has been cancelled now.
+	
+	<br>
+	<br>
+	
+	{% for staff in doc.active_subcons %}
+		
+		{{ staff.fname }} {{ staff.lname }} - {{ staff.job_designation }}
+		
+		{% if loop.last %}  {% else %} , {% endif %}
+		  
+	{% endfor %}
+	
+	has been <strong>SUSPENDED</strong>  for a week now which
+	is beyond our five (5) day limit and it doesn't seem fair for her and the company to be in this position due to your non-payment.
+
+	<br>
+	<br>
+	
+	Attached is your FINAL INVOICE, please settle this in order to avoid any further action.
+	
+	<br>
+	<br>
+	Please contact us immediately.
+
+	<br>
+	<br>
+	Thank you.
+	
+	<br>
+	<br>
+	
+	Regards,<br>
+	Accounts
+
+{% endif %}

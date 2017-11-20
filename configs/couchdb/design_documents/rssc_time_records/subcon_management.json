@@ -1,0 +1,12 @@
+{
+   "_id": "_design/subcon_management",
+   "language": "javascript",
+   "views": {
+       "quick_breaks": {
+           "map": "function(doc) {\n  if (doc.type == 'quick_break') {\n    emit(doc.start, [doc.userid, doc.end]);\n  }\n}"
+       },
+       "lunch_breaks": {
+           "map": "function(doc) {\n  if (doc.type == 'lunchrecord') {\n    emit(doc.start, [doc.userid, doc.end]);\n  }\n}"
+       }
+   }
+}

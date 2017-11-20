@@ -1,0 +1,39 @@
+{% block content %}
+
+<p>Dear {{temp.client_fname}} {{temp.client_lname}},</p>
+<br>
+<p>Hope this e-mail finds you well.</p><br>
+
+<p>We are now on the final stages of our recruitment process. On this email you will find the quotation form for your chosen staff:
+     <strong>{{temp.cand}}</strong>.
+</p><br>
+
+<p>Please click <a href="{{temp.link}}"  style="font-size: 15px;">here</a> to view and have a read through of the quotation including the
+   Service Agreement copy. Let me know if you have any questions.</p><br>
+
+<p>Please confirm your acceptance by clicking the <strong>“I Accept the Remote Staff Service Agreement and would like to continue with the
+    process”</strong> button that you will find at the middle of the page. I will then receive a notice that finalises our agreement.
+    Without me receiving your acceptance, we will not be able to extend any formal offer to your chosen Remote Staff. If I do not
+    hear from you within 2 business days, I will make sure to give you a follow up phone call.
+</p><br>
+
+<p>Kindly allow us 3-4 business days for the hiring process upon receipt of the documents. We require this type of time frame as
+    we want to take away the hassle of the administrative items from you as well as to have time to settle the invoice first
+    before the staff starts.
+</p><br>
+
+<p>It is a pleasure working with you through the hiring process. I am now looking forward to helping you make this relationship
+    work for you and your organisation.
+</p><br>
+
+<p>Let me know if you have any questions.</p>
+<p>&nbsp;</p>
+<p>Thank you,</p>
+<br>
+
+<p><strong>{{temp.admin_name}} {{temp.admin_lname}}</strong><br>
+    {{temp.signature|safe}}
+</p>
+
+
+{% endblock %}

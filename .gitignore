@@ -1,0 +1,8 @@
+*~
+.DS_Store
+.vagrant
+apache-couchdb-1.6.1/*
+apache-couchdb-1.6.1*
+cookbooks/*
+*.log
+app/node_modules/*

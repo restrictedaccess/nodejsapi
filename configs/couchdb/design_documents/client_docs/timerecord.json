@@ -1,0 +1,9 @@
+{
+   "_id": "_design/timerecord",
+   "language": "javascript",
+   "views": {
+       "tracking": {
+           "map": "function(doc) {\n  if (doc.type == 'credit accounting' && doc.doc_time_record_id != null) {\n    emit(doc.doc_time_record_id, null);\n  }\n}"
+       }
+   }
+}
